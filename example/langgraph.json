@@ -4,5 +4,8 @@
   "graphs": {
     "agent": "./node_modules/slidev-addon-agent/agent/index.ts:agent"
   },
+  "http": {
+    "app": "./node_modules/slidev-addon-agent/app/index.ts:app"
+  },
   "env": ".env"
 }

@@ -14,19 +14,24 @@
   },
   "exports": {
     ".": "./package.json",
-    "./agent": "./agent/index.ts"
+    "./agent": "./agent/index.ts",
+    "./app": "./app/index.ts"
   },
   "files": [
     "README.md",
     "agent",
+    "app",
     "bin",
     "components",
-    "lib"
+    "lib",
+    "public"
   ],
   "dependencies": {
     "@langchain/langgraph-cli": "latest",
     "@langchain/vue": "latest",
     "deepagents": "latest",
+    "hono": "latest",
+    "langchain": "latest",
     "zod": "latest"
   },
   "peerDependencies": {

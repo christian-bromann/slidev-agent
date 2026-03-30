@@ -61,6 +61,12 @@ importers:
       deepagents:
         specifier: latest
         version: 1.8.6(langsmith@0.5.15(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3))
+      hono:
+        specifier: latest
+        version: 4.12.9
+      langchain:
+        specifier: latest
+        version: 1.2.38(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3))
       vue:
         specifier: ^3.5.0
         version: 3.5.31(typescript@5.9.3)
@@ -2651,6 +2657,12 @@ packages:
     engines: {node: '>=20'}
     peerDependencies:
       '@langchain/core': ^1.1.36
+
+  langchain@1.2.38:
+    resolution: {integrity: sha512-viAHrUDbHZPHoRJ849L4LyabOx6P0tkKXoUUyLFaWv9pwPrbnyb88Eo/zoBrVL3vfwXBaCqHpkGqkjc7+M2hkA==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@langchain/core': ^1.1.37
 
   langium@4.2.1:
     resolution: {integrity: sha512-zu9QWmjpzJcomzdJQAHgDVhLGq5bLosVak1KVa40NzQHXfqr4eAHupvnPOVXEoLkg6Ocefvf/93d//SB7du4YQ==}
@@ -6752,6 +6764,26 @@ snapshots:
   kuler@2.0.0: {}
 
   langchain@1.2.37(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3)):
+    dependencies:
+      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
+      '@langchain/langgraph': 1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
+      '@langchain/langgraph-checkpoint': 1.0.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))
+      langsmith: 0.5.15(openai@6.33.0(zod@4.3.6))
+      uuid: 11.1.0
+      zod: 4.3.6
+    transitivePeerDependencies:
+      - '@opentelemetry/api'
+      - '@opentelemetry/exporter-trace-otlp-proto'
+      - '@opentelemetry/sdk-trace-base'
+      - openai
+      - react
+      - react-dom
+      - svelte
+      - vue
+      - ws
+      - zod-to-json-schema
+
+  langchain@1.2.38(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3)):
     dependencies:
       '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
       '@langchain/langgraph': 1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)

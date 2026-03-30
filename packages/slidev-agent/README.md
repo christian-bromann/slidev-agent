@@ -38,11 +38,19 @@ Current LangGraph JS loading is path-based, so reference the installed file in
 The exported agent uses `FilesystemBackend` rooted at the current working directory by default,
 with `virtualMode` enabled. That makes the Slidev project files the source of truth.
 
+The agent also includes bundled Slidev authoring guidance distilled from the official
+Slidev AI skill, so it has built-in awareness of Slidev syntax, layouts, animations,
+code features, diagrams, and presentation authoring best practices.
+In addition, the exported Deep Agent now points its `skills` configuration at the packaged
+`agent/skills` directory so the full bundled Slidev skill references are available to the agent
+at runtime when they are reachable from the project root.
+
 Optional agent env vars:
 
 - `SLIDEV_AGENT_MODEL`
 - `SLIDEV_AGENT_SYSTEM_PROMPT`
 - `SLIDEV_AGENT_ROOT_DIR`
+- `SLIDEV_AGENT_SKILLS_PATH` (comma-separated skill source paths relative to the backend root)
 
 ## Example wiring
 

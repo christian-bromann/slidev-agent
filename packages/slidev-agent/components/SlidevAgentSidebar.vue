@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useNav } from "@slidev/client"
 import { useStream } from "@langchain/vue"
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, unref, watch } from "vue"
 
@@ -7,11 +8,11 @@ import { getMessageContent, getMessageRole, getMessageToolCallId, getMessageTool
 import { setSlidevAgentOpen, slidevAgentUiState } from "../lib/state"
 
 const runtimeConfig = resolveSlidevAgentRuntimeConfig()
+const nav = useNav()
 const draft = ref("")
 const isSubmitting = ref(false)
 const isSwitchingThread = ref(false)
 const didResetMissingThread = ref(false)
-const openSubagentIds = ref<string[]>([])
 const messagesContainer = ref<HTMLElement | null>(null)
 const shouldAutoScroll = ref(true)
 const runtimeErrorMessage = ref("")
@@ -143,7 +144,11 @@ function summarizeToolResult(toolName: string, content: string) {
     return "Completed"
 
   const lines = trimmed.split("\n").map(line => line.trim()).filter(Boolean)
-  if (["ls", "glob", "grep", "read_file"].includes(toolName) && lines.length > 0) {
+  if (toolName === "read_file" && lines.length > 0) {
+    return `${lines.length} line${lines.length === 1 ? "" : "s"}`
+  }
+
+  if (["ls", "glob", "grep"].includes(toolName) && lines.length > 0) {
     return `${lines.length} item${lines.length === 1 ? "" : "s"}`
   }
 
@@ -199,9 +204,11 @@ const messages = computed(() => {
 })
 type StreamToolCall = {
   call?: {
+    id?: string
     name?: string
     args?: unknown
   }
+  result?: unknown
 }
 
 type StreamSubagent = {
@@ -215,23 +222,80 @@ type StreamSubagent = {
   toolCalls: StreamToolCall[]
 }
 
-const subagentCards = computed(() => {
+function stringifyUnknownResult(value: unknown): string {
+  if (typeof value === "string")
+    return value
+
+  if (Array.isArray(value))
+    return value.map(entry => stringifyUnknownResult(entry)).filter(Boolean).join("\n")
+
+  if (!value || typeof value !== "object")
+    return ""
+
+  const content = Reflect.get(value, "content")
+  if (typeof content === "string")
+    return content
+
+  const text = Reflect.get(value, "text")
+  if (typeof text === "string")
+    return text
+
+  return ""
+}
+
+function extractSubagentTask(toolCall: { args?: Record<string, unknown> } | undefined) {
+  const args = toolCall?.args
+  if (!args)
+    return ""
+
+  const preferredKeys = ["task", "prompt", "description", "instructions", "content", "goal"]
+  for (const key of preferredKeys) {
+    const value = Reflect.get(args, key)
+    if (typeof value === "string" && value.trim())
+      return truncateText(value.trim(), 140)
+  }
+
+  return ""
+}
+
+const subagentActivities = computed(() => {
   if (!stream)
     return []
 
   return Array.from(stream.subagents.values() as Iterable<StreamSubagent>)
     .map((subagent) => {
       const type = getSubagentType(subagent.toolCall)
+      const taskSummary = extractSubagentTask(subagent.toolCall)
       const files = extractTouchedFiles(subagent.toolCalls)
+      const messageCount = subagent.messages.length
+      const latestToolCall = subagent.toolCalls.at(-1)
+      const latestToolName = latestToolCall?.call?.name || ""
+      const latestToolArgs = formatToolArgs(latestToolCall?.call?.args)
+      const latestToolSummary = latestToolName
+        ? summarizeToolResult(latestToolName, stringifyUnknownResult(latestToolCall?.result))
+        : ""
+
+      const hasVisibleActivity = Boolean(
+        taskSummary
+        || latestToolName
+        || files.length > 0
+        || messageCount > 0,
+      )
 
       return {
         id: subagent.id,
         type,
         status: subagent.status,
+        taskSummary,
+        latestToolName,
+        latestToolArgs,
+        latestToolSummary,
         files,
-        messageCount: subagent.messages.length,
+        messageCount,
+        hasVisibleActivity,
       }
     })
+    .filter(subagent => subagent.hasVisibleActivity || ["running", "pending", "error"].includes(subagent.status))
     .sort((left, right) => {
       const statusPriority = getSubagentStatusPriority(left.status) - getSubagentStatusPriority(right.status)
       if (statusPriority !== 0)
@@ -323,25 +387,27 @@ function extractTouchedFiles(toolCalls: Array<{ call?: { name?: string; args?: u
   return Array.from(files).slice(0, 8)
 }
 
-function toggleSubagentCard(subagentId: string) {
-  if (openSubagentIds.value.includes(subagentId)) {
-    openSubagentIds.value = openSubagentIds.value.filter(id => id !== subagentId)
-    return
-  }
-
-  openSubagentIds.value = [...openSubagentIds.value, subagentId]
-}
-
-function isSubagentCardOpen(subagentId: string) {
-  return openSubagentIds.value.includes(subagentId)
-}
-
 function handleComposerKeydown(event: KeyboardEvent) {
   if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
     event.preventDefault()
     void sendMessage()
   }
 }
+
+const currentSlideContext = computed(() => {
+  const route = unref(nav.currentSlideRoute)
+  const slideMeta = route && typeof route === "object" ? Reflect.get(route, "meta") : undefined
+  const slide = slideMeta && typeof slideMeta === "object" ? Reflect.get(slideMeta, "slide") : undefined
+  const frontmatter = slide && typeof slide === "object" ? Reflect.get(slide, "frontmatter") : undefined
+  const title = frontmatter && typeof frontmatter === "object" ? Reflect.get(frontmatter, "title") : undefined
+
+  return {
+    page: unref(nav.currentPage),
+    layout: unref(nav.currentLayout) || undefined,
+    route: route && typeof route === "object" ? String(Reflect.get(route, "path") || "") || undefined : undefined,
+    title: typeof title === "string" && title.trim() ? title.trim() : undefined,
+  }
+})
 
 function isNearBottom(element: HTMLElement) {
   const threshold = 24
@@ -418,6 +484,9 @@ async function sendMessage() {
         },
       ],
     }, {
+      context: {
+        currentSlide: currentSlideContext.value,
+      },
       multitaskStrategy: "enqueue",
     })
   }
@@ -479,7 +548,7 @@ watch(messages, () => {
   void scrollMessagesToBottom()
 })
 
-watch(subagentCards, () => {
+watch(subagentActivities, () => {
   void scrollMessagesToBottom()
 })
 
@@ -490,17 +559,6 @@ watch(activeSubagentCount, () => {
 
 <template>
   <Teleport to="body">
-    <button
-      v-if="!slidevAgentUiState.isOpen"
-      class="slidev-agent-sidebar__launcher"
-      type="button"
-      aria-label="Open agent sidebar"
-      @click="setSlidevAgentOpen(true)"
-    >
-      <span class="slidev-agent-sidebar__launcher-icon">AI</span>
-      <span class="slidev-agent-sidebar__launcher-label">Open agent</span>
-    </button>
-
     <aside
       class="slidev-agent-sidebar"
       :class="{ 'slidev-agent-sidebar--open': slidevAgentUiState.isOpen }"
@@ -533,60 +591,6 @@ watch(activeSubagentCount, () => {
       {{ runtimeErrorMessage }}
     </p>
 
-      <section v-if="subagentCards.length > 0" class="slidev-agent-sidebar__subagents">
-        <div class="slidev-agent-sidebar__subagents-header">
-          <h3 class="slidev-agent-sidebar__subagents-title">Subagents</h3>
-          <span class="slidev-agent-sidebar__subagents-count">{{ subagentCards.length }}</span>
-        </div>
-
-        <div class="slidev-agent-sidebar__subagent-list">
-          <div
-            v-for="subagent in subagentCards"
-            :key="subagent.id"
-            class="slidev-agent-sidebar__subagent-card"
-          >
-            <button
-              class="slidev-agent-sidebar__subagent-toggle"
-              type="button"
-              @click="toggleSubagentCard(subagent.id)"
-            >
-              <div class="slidev-agent-sidebar__subagent-meta">
-                <span class="slidev-agent-sidebar__subagent-name">{{ subagent.type }}</span>
-                <span
-                  class="slidev-agent-sidebar__subagent-status"
-                  :class="`slidev-agent-sidebar__subagent-status--${subagent.status}`"
-                >
-                  {{ subagent.status }}
-                </span>
-              </div>
-              <span class="slidev-agent-sidebar__subagent-chevron">
-                {{ isSubagentCardOpen(subagent.id) ? "−" : "+" }}
-              </span>
-            </button>
-
-            <div v-if="isSubagentCardOpen(subagent.id)" class="slidev-agent-sidebar__subagent-body">
-              <p class="slidev-agent-sidebar__subagent-summary">
-                {{ subagent.messageCount }} streamed message{{ subagent.messageCount === 1 ? "" : "s" }}
-              </p>
-
-              <div v-if="subagent.files.length > 0" class="slidev-agent-sidebar__subagent-files">
-                <span
-                  v-for="file in subagent.files"
-                  :key="file"
-                  class="slidev-agent-sidebar__subagent-file"
-                >
-                  {{ file }}
-                </span>
-              </div>
-
-              <p v-else class="slidev-agent-sidebar__subagent-summary">
-                No file paths observed yet.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <div
         ref="messagesContainer"
         class="slidev-agent-sidebar__messages"
@@ -618,6 +622,49 @@ watch(activeSubagentCount, () => {
               {{ message.content }}
             </div>
           </template>
+        </div>
+
+        <div
+          v-for="subagent in subagentActivities"
+          :key="subagent.id"
+          class="slidev-agent-sidebar__message slidev-agent-sidebar__message--subagent"
+        >
+          <div class="slidev-agent-sidebar__message-role">Subagent</div>
+          <div class="slidev-agent-sidebar__subagent-inline-card">
+            <div class="slidev-agent-sidebar__subagent-inline-header">
+              <span class="slidev-agent-sidebar__subagent-name">{{ subagent.type }}</span>
+              <span
+                class="slidev-agent-sidebar__subagent-status"
+                :class="`slidev-agent-sidebar__subagent-status--${subagent.status}`"
+              >
+                {{ subagent.status }}
+              </span>
+            </div>
+
+            <p v-if="subagent.taskSummary" class="slidev-agent-sidebar__subagent-inline-task">
+              {{ subagent.taskSummary }}
+            </p>
+
+            <div v-if="subagent.latestToolName" class="slidev-agent-sidebar__subagent-inline-tool">
+              <span class="slidev-agent-sidebar__subagent-inline-tool-name">{{ subagent.latestToolName }}</span>
+              <span v-if="subagent.latestToolArgs" class="slidev-agent-sidebar__subagent-inline-tool-args">
+                {{ subagent.latestToolArgs }}
+              </span>
+              <span v-if="subagent.latestToolSummary" class="slidev-agent-sidebar__subagent-inline-tool-summary">
+                {{ subagent.latestToolSummary }}
+              </span>
+            </div>
+
+            <div v-if="subagent.files.length > 0" class="slidev-agent-sidebar__subagent-files">
+              <span
+                v-for="file in subagent.files"
+                :key="file"
+                class="slidev-agent-sidebar__subagent-file"
+              >
+                {{ file }}
+              </span>
+            </div>
+          </div>
         </div>
 
         <p v-if="messages.length === 0" class="slidev-agent-sidebar__empty-state">
@@ -671,46 +718,6 @@ watch(activeSubagentCount, () => {
   width: calc(100vw - var(--slidev-agent-reserved-width));
   max-width: calc(100vw - var(--slidev-agent-reserved-width));
   transition: width 180ms ease, max-width 180ms ease;
-}
-
-.slidev-agent-sidebar__launcher {
-  right: calc(1rem + var(--slidev-agent-reserved-width));
-  transition: right 180ms ease;
-}
-
-.slidev-agent-sidebar__launcher {
-  position: fixed;
-  top: 1rem;
-  z-index: 61;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  border-radius: 999px;
-  padding: 0.55rem 0.85rem;
-  background: rgba(15, 23, 42, 0.88);
-  color: white;
-  cursor: pointer;
-  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.24);
-  backdrop-filter: blur(10px);
-}
-
-.slidev-agent-sidebar__launcher-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 999px;
-  background: rgba(37, 99, 235, 0.26);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.slidev-agent-sidebar__launcher-label {
-  font-size: 0.82rem;
-  white-space: nowrap;
 }
 
 .slidev-agent-sidebar {
@@ -803,70 +810,6 @@ watch(activeSubagentCount, () => {
   line-height: 1.45;
 }
 
-.slidev-agent-sidebar__subagents {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.slidev-agent-sidebar__subagents-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.slidev-agent-sidebar__subagents-title {
-  margin: 0;
-  font-size: 0.92rem;
-  font-weight: 600;
-}
-
-.slidev-agent-sidebar__subagents-count {
-  min-width: 1.5rem;
-  height: 1.5rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: rgba(37, 99, 235, 0.2);
-  font-size: 0.75rem;
-  color: #bfdbfe;
-}
-
-.slidev-agent-sidebar__subagent-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.slidev-agent-sidebar__subagent-card {
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 0.85rem;
-  background: rgba(15, 23, 42, 0.72);
-  overflow: hidden;
-}
-
-.slidev-agent-sidebar__subagent-toggle {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.7rem 0.8rem;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-}
-
-.slidev-agent-sidebar__subagent-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  min-width: 0;
-}
-
 .slidev-agent-sidebar__subagent-name {
   font-size: 0.86rem;
   font-weight: 600;
@@ -903,25 +846,6 @@ watch(activeSubagentCount, () => {
   color: #fecaca;
 }
 
-.slidev-agent-sidebar__subagent-chevron {
-  font-size: 1rem;
-  line-height: 1;
-  color: #cbd5e1;
-}
-
-.slidev-agent-sidebar__subagent-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  padding: 0 0.8rem 0.8rem;
-}
-
-.slidev-agent-sidebar__subagent-summary {
-  margin: 0;
-  font-size: 0.8rem;
-  color: #cbd5e1;
-}
-
 .slidev-agent-sidebar__subagent-files {
   display: flex;
   flex-wrap: wrap;
@@ -940,6 +864,59 @@ watch(activeSubagentCount, () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.slidev-agent-sidebar__message--subagent {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.slidev-agent-sidebar__subagent-inline-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.slidev-agent-sidebar__subagent-inline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.slidev-agent-sidebar__subagent-inline-task {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #e2e8f0;
+}
+
+.slidev-agent-sidebar__subagent-inline-tool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.slidev-agent-sidebar__subagent-inline-tool-name {
+  font-weight: 600;
+  color: #dbeafe;
+  text-transform: lowercase;
+}
+
+.slidev-agent-sidebar__subagent-inline-tool-args {
+  color: #cbd5e1;
+}
+
+.slidev-agent-sidebar__subagent-inline-tool-summary {
+  color: #93c5fd;
+}
+
+.slidev-agent-sidebar__subagent-inline-tool-summary::before {
+  content: "•";
+  margin-right: 0.3rem;
+  color: rgba(148, 163, 184, 0.6);
 }
 
 .slidev-agent-sidebar__messages {
