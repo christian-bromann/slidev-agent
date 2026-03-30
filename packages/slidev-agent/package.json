@@ -1,0 +1,55 @@
+{
+  "name": "slidev-addon-agent",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Slidev addon and wrapper CLI for LangChain-powered slide authoring.",
+  "keywords": [
+    "slidev-addon",
+    "slidev",
+    "langchain",
+    "langgraph"
+  ],
+  "bin": {
+    "slidev-agent": "./bin/slidev-agent.mjs"
+  },
+  "exports": {
+    ".": "./package.json",
+    "./agent": "./agent/index.ts"
+  },
+  "files": [
+    "README.md",
+    "agent",
+    "bin",
+    "components",
+    "lib"
+  ],
+  "dependencies": {
+    "@langchain/langgraph-cli": "latest",
+    "@langchain/vue": "latest",
+    "deepagents": "latest",
+    "zod": "latest"
+  },
+  "peerDependencies": {
+    "@langchain/anthropic": "*",
+    "@langchain/google-genai": "*",
+    "@langchain/langgraph": "*",
+    "@langchain/openai": "*",
+    "@langchain/openrouter": "*",
+    "@slidev/cli": "^52.14.1",
+    "vue": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "@langchain/anthropic": {
+      "optional": true
+    },
+    "@langchain/google-genai": {
+      "optional": true
+    },
+    "@langchain/openai": {
+      "optional": true
+    },
+    "@langchain/openrouter": {
+      "optional": true
+    }
+  }
+}

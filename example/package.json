@@ -1,0 +1,24 @@
+{
+  "name": "slidev-agent-example",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "slidev-agent build",
+    "dev": "slidev-agent dev --open",
+    "export": "slidev-agent export"
+  },
+  "slidev": {
+    "addons": [
+      "slidev-addon-agent"
+    ]
+  },
+  "dependencies": {
+    "@langchain/anthropic": "latest",
+    "@langchain/langgraph": "latest",
+    "slidev-addon-agent": "workspace:*",
+    "@slidev/cli": "^52.14.1",
+    "@slidev/theme-default": "latest",
+    "@slidev/theme-seriph": "latest",
+    "vue": "^3.5.29"
+  }
+}

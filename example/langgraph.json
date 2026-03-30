@@ -1,0 +1,8 @@
+{
+  "node_version": "20",
+  "dependencies": ["."],
+  "graphs": {
+    "agent": "./node_modules/slidev-addon-agent/agent/index.ts:agent"
+  },
+  "env": ".env"
+}
