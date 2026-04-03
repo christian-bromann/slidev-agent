@@ -2,7 +2,7 @@
 
 import { readFileSync } from "node:fs"
 import { stat } from "node:fs/promises"
-import { spawn } from "node:child_process"
+import { spawn, type ChildProcess } from "node:child_process"
 import { createRequire } from "node:module"
 import path from "node:path"
 
@@ -86,6 +86,43 @@ async function startLangGraphDev() {
   ])
 }
 
+/** Resolves when `child` has exited (immediately if it already has). */
+function onceChildExit(child: ChildProcess): Promise<void> {
+  return new Promise((resolve) => {
+    if (child.exitCode !== null || child.signalCode !== null) {
+      resolve()
+      return
+    }
+    child.once("exit", () => resolve())
+  })
+}
+
+const CHILD_SHUTDOWN_TIMEOUT_MS = 10_000
+
+async function waitForChildrenThenExit(
+  slidevChild: ChildProcess,
+  langgraphChild: ChildProcess | null,
+  exitCode: number,
+) {
+  const waitFor = [onceChildExit(slidevChild)]
+  if (langgraphChild)
+    waitFor.push(onceChildExit(langgraphChild))
+
+  const timeout = setTimeout(() => {
+    langgraphChild?.kill("SIGKILL")
+    slidevChild.kill("SIGKILL")
+  }, CHILD_SHUTDOWN_TIMEOUT_MS)
+
+  try {
+    await Promise.all(waitFor)
+  }
+  finally {
+    clearTimeout(timeout)
+  }
+
+  process.exit(exitCode)
+}
+
 async function run() {
   if (command === "sync") {
     const subcommand = rest[0] || "pull"
@@ -121,26 +158,35 @@ async function run() {
   let isShuttingDown = false
 
   function shutdown(exitCode = 0) {
-    if (isShuttingDown)
+    if (isShuttingDown) {
+      // Second Ctrl+C (or SIGTERM) while waiting for children: force quit.
+      langgraphChild?.kill("SIGKILL")
+      slidevChild.kill("SIGKILL")
+      process.exit(exitCode)
       return
+    }
 
     isShuttingDown = true
 
     langgraphChild?.kill("SIGTERM")
     slidevChild.kill("SIGTERM")
 
-    process.exit(exitCode)
+    void waitForChildrenThenExit(slidevChild, langgraphChild, exitCode)
   }
 
   process.on("SIGINT", () => shutdown(0))
   process.on("SIGTERM", () => shutdown(0))
 
   langgraphChild?.on("exit", (code: number | null) => {
-    if (!isShuttingDown && (code ?? 0) !== 0)
+    if (isShuttingDown)
+      return
+    if ((code ?? 0) !== 0)
       shutdown(code ?? 1)
   })
 
   slidevChild.on("exit", (code: number | null) => {
+    if (isShuttingDown)
+      return
     shutdown(code ?? 1)
   })
 }
