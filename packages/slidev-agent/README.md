@@ -6,51 +6,41 @@ Slidev addon components and a wrapper CLI for LangChain-powered slide authoring.
 
 - `SlidevAgentSidebar` for a persistent right-side agent panel
 - `SlidevAgentNavButton` for a Slidev nav control toggle
-- `slidev-agent` CLI for running a local Slidev deck
+- `slidev-agent` CLI for running a local Slidev deck and related tasks
 - `slidev-addon-agent/agent` for a Deep Agent that edits the local deck filesystem
 
-## Deep Agent export
+## Setup
 
-The package publishes a LangGraph-ready deep agent entrypoint at `slidev-addon-agent/agent`.
+### Prerequisites
 
-It exports:
+- Slidev: `@slidev/cli` and `vue` (peer dependencies).
+- LangGraph: `@langchain/langgraph` for the deep agent runtime.
+- Chat model: install one of `@langchain/openai`, `@langchain/anthropic`, or `@langchain/google`, and set the matching API key in the environment your LangGraph server uses.
 
-- `agent`
-- `graph`
-- `createSlidevDeepAgent()`
-- `createSlidevFilesystemBackend()`
+### Install
 
-Example `langgraph.json`:
+In your Slidev project (or LangGraph app that bundles the agent):
 
-```json
-{
-  "dependencies": ["."],
-  "graphs": {
-    "agent": "./node_modules/slidev-addon-agent/agent/index.ts:agent"
-  },
-  "env": ".env"
-}
+```bash
+# base setup
+pnpm add slidev-addon-agent @slidev/cli vue @langchain/langgraph
+# LLM provider
+pnpm add @langchain/openai   # or @langchain/anthropic / @langchain/google
 ```
 
-Current LangGraph JS loading is path-based, so reference the installed file in
-`node_modules` rather than a bare package subpath.
+Register the addon in `slidev` config (see Slidev docs) and wire `SlidevAgentSidebar` / `SlidevAgentNavButton` as in [Example wiring](#example-wiring).
 
-The exported agent uses `FilesystemBackend` rooted at the current working directory by default,
-with `virtualMode` enabled. That makes the Slidev project files the source of truth.
+### Agent environment variables
 
-The agent also includes bundled Slidev authoring guidance distilled from the official
-Slidev AI skill, so it has built-in awareness of Slidev syntax, layouts, animations,
-code features, diagrams, and presentation authoring best practices.
-In addition, the exported Deep Agent now points its `skills` configuration at the packaged
-`agent/skills` directory so the full bundled Slidev skill references are available to the agent
-at runtime when they are reachable from the project root.
+The deep agent uses your project directory as the filesystem root (virtualMode) and bundled Slidev skills when those paths are reachable. Set these in `.env` (or your LangGraph deployment) for the **server** that runs the graph:
 
-Optional agent env vars:
-
-- `SLIDEV_AGENT_MODEL`
-- `SLIDEV_AGENT_SYSTEM_PROMPT`
-- `SLIDEV_AGENT_ROOT_DIR`
-- `SLIDEV_AGENT_SKILLS_PATH` (comma-separated skill source paths relative to the backend root)
+| Variable | Purpose |
+|----------|---------|
+| `SLIDEV_AGENT_MODEL` | Model id, e.g. `openai:gpt-5.4`, `anthropic:claude-sonnet-4-6`. |
+| `SLIDEV_AGENT_SYSTEM_PROMPT` | Replaces the default system prompt when set. |
+| `SLIDEV_AGENT_ROOT_DIR` | Filesystem root for deck files (defaults to `process.cwd()`). |
+| `SLIDEV_AGENT_SKILLS_PATH` | Comma-separated extra skill directories (POSIX paths relative to the backend root). |
+| `SLIDEV_AGENT_DISABLE_LANGGRAPH` | Set to `1` to skip spawning `langgraph dev` alongside Slidev when using `slidev-agent dev`. |
 
 ## Example wiring
 
@@ -69,16 +59,3 @@ Add the addon to your Slidev project and render the components from root layer f
   <SlidevAgentNavButton v-if="!$nav.isPresenter" />
 </template>
 ```
-
-## Frontend env vars
-
-The sidebar reads these Vite env vars:
-
-- `VITE_LANGGRAPH_API_URL`
-- `VITE_LANGGRAPH_ASSISTANT_ID` (optional if your app injects it)
-- `VITE_LANGGRAPH_THREAD_ID` (optional)
-- `VITE_SLIDEV_AGENT_DECK_ID` (optional)
-- `VITE_SLIDEV_AGENT_PLACEHOLDER` (optional)
-
-`VITE_LANGGRAPH_API_URL` defaults to `http://localhost:2024` in local development. If the
-assistant ID is not available, the sidebar falls back to an offline demo mode.

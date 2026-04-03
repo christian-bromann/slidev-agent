@@ -1,21 +1,39 @@
 <script setup lang="ts">
 import { useNav } from "@slidev/client"
 import { useStream } from "@langchain/vue"
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, unref, watch } from "vue"
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, toValue, unref, watch } from "vue"
 
-import { clearSlidevAgentThreadId, persistSlidevAgentThreadId, resolveSlidevAgentRuntimeConfig } from "../lib/config"
-import { getMessageContent, getMessageRole, getMessageToolCallId, getMessageToolName } from "../lib/messages"
+import MessageItem from "./MessageItem.vue"
+import TypingDots from "./TypingDots.vue"
+import {
+  clearSlidevAgentThreadId,
+  persistSlidevAgentThreadId,
+  resolveSlidevAgentRuntimeConfig,
+} from "../lib/config"
+import {
+  buildSidebarMessages,
+  buildToolCallLookup,
+  collectActiveSubagentIds,
+  createSubagentActivityMessage,
+  filterVisibleSidebarMessages,
+  getMappedSubagentIds,
+  normalizeMessages,
+  summarizeSubagentActivities,
+  type StreamSubagent,
+} from "../lib/sidebar"
 import { setSlidevAgentOpen, slidevAgentUiState } from "../lib/state"
 
 const runtimeConfig = resolveSlidevAgentRuntimeConfig()
 const nav = useNav()
+
 const draft = ref("")
 const isSubmitting = ref(false)
 const isSwitchingThread = ref(false)
 const didResetMissingThread = ref(false)
+const runtimeErrorMessage = ref("")
 const messagesContainer = ref<HTMLElement | null>(null)
 const shouldAutoScroll = ref(true)
-const runtimeErrorMessage = ref("")
+
 const sidebarReservedWidth = "min(26rem, 85vw)"
 const fallbackMessages = ref([
   {
@@ -23,35 +41,6 @@ const fallbackMessages = ref([
     content: "Start your LangGraph server on http://localhost:2024 and ensure the assistant ID from your langgraph.json graph key is available to the frontend.",
   },
 ])
-
-const stream = runtimeConfig.enabled
-  ? useStream({
-      apiUrl: runtimeConfig.apiUrl,
-      assistantId: runtimeConfig.assistantId,
-      threadId: runtimeConfig.threadId,
-      fetchStateHistory: false,
-      filterSubagentMessages: true,
-      onError: (error) => {
-        const message = error instanceof Error ? error.message : String(error)
-
-        const configMessage = getConfigurationErrorMessage(message)
-        if (configMessage) {
-          runtimeErrorMessage.value = configMessage
-          return
-        }
-
-        if (!didResetMissingThread.value && message.includes("Thread with ID") && message.includes("not found")) {
-          didResetMissingThread.value = true
-          clearSlidevAgentThreadId(runtimeConfig.assistantId, runtimeConfig.deckId)
-          stream?.switchThread(null)
-        }
-      },
-      onThreadId: (threadId) => {
-        persistSlidevAgentThreadId(runtimeConfig.assistantId, runtimeConfig.deckId, threadId)
-      },
-      reconnectOnMount: true,
-    })
-  : null
 
 function getConfigurationErrorMessage(message: string) {
   const normalized = message.toLowerCase()
@@ -71,10 +60,56 @@ function getConfigurationErrorMessage(message: string) {
   return ""
 }
 
-function normalizeMessages(value: unknown) {
-  const unwrapped = unref(value)
-  return Array.isArray(unwrapped) ? unwrapped : []
+function clearStoredThread() {
+  clearSlidevAgentThreadId(runtimeConfig.assistantId, runtimeConfig.deckId)
 }
+
+function buildOptimisticValues(previous: unknown, nextMessage: { type: string, content: string }) {
+  const previousState = previous && typeof previous === "object"
+    ? previous as Record<string, unknown>
+    : {}
+
+  return {
+    ...previousState,
+    messages: [
+      ...normalizeMessages(Reflect.get(previousState, "messages")),
+      nextMessage,
+    ],
+  }
+}
+
+const stream = runtimeConfig.enabled
+  ? useStream({
+      apiUrl: runtimeConfig.apiUrl,
+      assistantId: runtimeConfig.assistantId,
+      threadId: runtimeConfig.threadId,
+      fetchStateHistory: false,
+      filterSubagentMessages: true,
+      reconnectOnMount: true,
+      onThreadId: (threadId) => {
+        persistSlidevAgentThreadId(runtimeConfig.assistantId, runtimeConfig.deckId, threadId)
+      },
+      onError: (error) => {
+        const message = error instanceof Error ? error.message : String(error)
+        const configMessage = getConfigurationErrorMessage(message)
+
+        if (configMessage) {
+          runtimeErrorMessage.value = configMessage
+          return
+        }
+
+        if (
+          !didResetMissingThread.value
+          && message.includes("Thread with ID")
+          && message.includes("not found")
+        ) {
+          didResetMissingThread.value = true
+          clearStoredThread()
+          void stream?.switchThread(null)
+        }
+      },
+    })
+  : null
 
 const rawMessages = computed(() => {
   if (!stream)
@@ -82,317 +117,136 @@ const rawMessages = computed(() => {
 
   return normalizeMessages(stream.messages)
 })
-const activeSubagentCount = computed(() => stream ? stream.activeSubagents.length : 0)
-const queuedMessageCount = computed(() => {
-  if (!stream)
-    return 0
 
-  const queue = unref(stream.queue)
-  if (!queue || typeof queue !== "object")
-    return 0
-
-  const size = Reflect.get(queue, "size")
-  return typeof size === "number" ? size : 0
+const activeSubagentIds = computed(() => {
+  return collectActiveSubagentIds(stream?.activeSubagents)
 })
+
+/** Sync useStream() fields into plain refs — nested refs on a plain object do not always trigger template/computed updates. */
+const trackedActiveSubagentCount = ref(0)
+const trackedQueueSize = ref(0)
+const trackedStreamLoading = ref(false)
+const trackedThreadLoading = ref(false)
+
+watch(
+  () => (stream ? stream.activeSubagents.length : 0),
+  value => {
+    trackedActiveSubagentCount.value = value
+  },
+  { immediate: true },
+)
+
+watch(
+  () => {
+    if (!stream)
+      return 0
+    const size = stream.queue.size
+    return typeof size === "number" ? size : 0
+  },
+  value => {
+    trackedQueueSize.value = value
+  },
+  { immediate: true },
+)
+
+watch(
+  () => (stream ? toValue(stream.isLoading) : false),
+  value => {
+    trackedStreamLoading.value = Boolean(value)
+  },
+  { immediate: true },
+)
+
+watch(
+  () => (stream ? toValue(stream.isThreadLoading) : false),
+  value => {
+    trackedThreadLoading.value = Boolean(value)
+  },
+  { immediate: true },
+)
+
+/** True while sending, streaming, loading thread history, queued work, or subagents running. */
+const isStreamActive = computed(() => {
+  return (
+    isSubmitting.value
+    || trackedStreamLoading.value
+    || trackedThreadLoading.value
+    || trackedQueueSize.value > 0
+    || isSwitchingThread.value
+    || trackedActiveSubagentCount.value > 0
+  )
+})
+
 const connectionState = computed(() => {
-  if (!runtimeConfig.enabled || runtimeErrorMessage.value)
-    return "disconnected"
+  if (!runtimeConfig.enabled)
+    return "fallback"
+
+  if (runtimeErrorMessage.value)
+    return "error"
 
   return "connected"
 })
+
 const connectionLabel = computed(() => {
-  return connectionState.value === "connected" ? "Connected" : "Disconnected"
-})
-const visibleMessages = computed(() => {
-  return rawMessages.value.filter((message) => {
-    const content = getMessageContent(message).trim()
-    return content.length > 0
-  })
-})
-type ToolCallResult = {
-  call?: {
-    id?: string
-    name?: string
-    args?: unknown
+  switch (connectionState.value) {
+    case "fallback":
+      return "Local fallback"
+    case "error":
+      return "Needs attention"
+    default:
+      return "Connected"
   }
-}
+})
 
 const toolCallLookup = computed(() => {
-  const lookup = new Map<string, ToolCallResult>()
-  if (!stream)
-    return lookup
-
-  const entries = Array.isArray(stream.toolCalls) ? stream.toolCalls : []
-  entries.forEach((entry) => {
-    const callId = entry?.call?.id
-    if (typeof callId === "string" && callId)
-      lookup.set(callId, entry)
-  })
-  return lookup
+  return buildToolCallLookup(stream?.toolCalls, rawMessages.value)
 })
-
-function truncateText(value: string, maxLength = 96) {
-  if (value.length <= maxLength)
-    return value
-
-  return `${value.slice(0, maxLength - 1)}…`
-}
-
-function summarizeToolResult(toolName: string, content: string) {
-  const trimmed = content.trim()
-  if (!trimmed)
-    return "Completed"
-
-  const lines = trimmed.split("\n").map(line => line.trim()).filter(Boolean)
-  if (toolName === "read_file" && lines.length > 0) {
-    return `${lines.length} line${lines.length === 1 ? "" : "s"}`
-  }
-
-  if (["ls", "glob", "grep"].includes(toolName) && lines.length > 0) {
-    return `${lines.length} item${lines.length === 1 ? "" : "s"}`
-  }
-
-  return truncateText(lines[0] || trimmed)
-}
-
-function formatToolArgs(args: unknown) {
-  if (!args || typeof args !== "object")
-    return ""
-
-  const preferredKeys = ["path", "filePath", "file_path", "pattern", "glob", "command"]
-  const parts = preferredKeys
-    .map((key) => {
-      const value = Reflect.get(args, key)
-      if (typeof value !== "string" || !value.trim())
-        return ""
-
-      return `${key}: ${truncateText(value.trim(), 48)}`
-    })
-    .filter(Boolean)
-
-  return parts.join(" · ")
-}
-
-const messages = computed(() => {
-  return visibleMessages.value.map((message) => {
-    const role = getMessageRole(message)
-
-    if (role === "tool") {
-      const toolCallId = getMessageToolCallId(message)
-      const toolCall = toolCallId ? toolCallLookup.value.get(toolCallId) : undefined
-      const toolName = toolCall?.call?.name || getMessageToolName(message) || "tool"
-      const argsSummary = formatToolArgs(toolCall?.call?.args)
-      const resultSummary = summarizeToolResult(toolName, getMessageContent(message))
-
-      return {
-        kind: "tool" as const,
-        role,
-        roleLabel: "Tool",
-        toolName,
-        argsSummary,
-        resultSummary,
-      }
-    }
-
-    return {
-      kind: "message" as const,
-      role,
-      roleLabel: role === "human" ? "You" : "Agent",
-      content: getMessageContent(message),
-    }
-  })
-})
-type StreamToolCall = {
-  call?: {
-    id?: string
-    name?: string
-    args?: unknown
-  }
-  result?: unknown
-}
-
-type StreamSubagent = {
-  id: string
-  status: string
-  messages: unknown[]
-  toolCall: {
-    args?: Record<string, unknown>
-    id?: string
-  }
-  toolCalls: StreamToolCall[]
-}
-
-function stringifyUnknownResult(value: unknown): string {
-  if (typeof value === "string")
-    return value
-
-  if (Array.isArray(value))
-    return value.map(entry => stringifyUnknownResult(entry)).filter(Boolean).join("\n")
-
-  if (!value || typeof value !== "object")
-    return ""
-
-  const content = Reflect.get(value, "content")
-  if (typeof content === "string")
-    return content
-
-  const text = Reflect.get(value, "text")
-  if (typeof text === "string")
-    return text
-
-  return ""
-}
-
-function extractSubagentTask(toolCall: { args?: Record<string, unknown> } | undefined) {
-  const args = toolCall?.args
-  if (!args)
-    return ""
-
-  const preferredKeys = ["task", "prompt", "description", "instructions", "content", "goal"]
-  for (const key of preferredKeys) {
-    const value = Reflect.get(args, key)
-    if (typeof value === "string" && value.trim())
-      return truncateText(value.trim(), 140)
-  }
-
-  return ""
-}
 
 const subagentActivities = computed(() => {
   if (!stream)
     return []
 
-  return Array.from(stream.subagents.values() as Iterable<StreamSubagent>)
-    .map((subagent) => {
-      const type = getSubagentType(subagent.toolCall)
-      const taskSummary = extractSubagentTask(subagent.toolCall)
-      const files = extractTouchedFiles(subagent.toolCalls)
-      const messageCount = subagent.messages.length
-      const latestToolCall = subagent.toolCalls.at(-1)
-      const latestToolName = latestToolCall?.call?.name || ""
-      const latestToolArgs = formatToolArgs(latestToolCall?.call?.args)
-      const latestToolSummary = latestToolName
-        ? summarizeToolResult(latestToolName, stringifyUnknownResult(latestToolCall?.result))
-        : ""
-
-      const hasVisibleActivity = Boolean(
-        taskSummary
-        || latestToolName
-        || files.length > 0
-        || messageCount > 0,
-      )
-
-      return {
-        id: subagent.id,
-        type,
-        status: subagent.status,
-        taskSummary,
-        latestToolName,
-        latestToolArgs,
-        latestToolSummary,
-        files,
-        messageCount,
-        hasVisibleActivity,
-      }
-    })
-    .filter(subagent => subagent.hasVisibleActivity || ["running", "pending", "error"].includes(subagent.status))
-    .sort((left, right) => {
-      const statusPriority = getSubagentStatusPriority(left.status) - getSubagentStatusPriority(right.status)
-      if (statusPriority !== 0)
-        return statusPriority
-
-      return left.type.localeCompare(right.type)
-    })
+  const subagents = Array.from(stream.subagents.values() as Iterable<StreamSubagent>)
+  return summarizeSubagentActivities(subagents, activeSubagentIds.value)
 })
 
-function getSubagentStatusPriority(status: string) {
-  switch (status) {
-    case "running":
-      return 0
-    case "pending":
-      return 1
-    case "error":
-      return 2
-    case "complete":
-      return 3
-    default:
-      return 4
-  }
+const knownSubagentIds = computed(() => {
+  return new Set(subagentActivities.value.map(subagent => subagent.id))
+})
+
+function getSubagentsByMessage(messageId: string): StreamSubagent[] {
+  if (!stream || !messageId)
+    return []
+
+  const subagents = stream.getSubagentsByMessage(messageId)
+  return Array.isArray(subagents) ? subagents as StreamSubagent[] : []
 }
 
-function getSubagentType(toolCall: { args?: Record<string, unknown> } | undefined) {
-  const subagentType = toolCall?.args?.subagent_type
-  return typeof subagentType === "string" && subagentType
-    ? subagentType
-    : "subagent"
-}
+const messages = computed(() => {
+  return filterVisibleSidebarMessages(buildSidebarMessages({
+    rawMessages: rawMessages.value,
+    toolCallLookup: toolCallLookup.value,
+    getSubagentsByMessage,
+    activeSubagentIds: activeSubagentIds.value,
+    knownSubagentIds: knownSubagentIds.value,
+  }))
+})
 
-function normalizePossiblePath(value: unknown): string | null {
-  if (typeof value !== "string")
-    return null
+const orphanedSubagentMessages = computed(() => {
+  const mappedSubagentIds = getMappedSubagentIds(messages.value)
+  return subagentActivities.value
+    .filter(subagent => !mappedSubagentIds.has(subagent.id))
+    .map(createSubagentActivityMessage)
+})
 
-  const normalized = value.trim()
-  if (!normalized)
-    return null
+const visibleMessages = computed(() => {
+  return [...messages.value, ...orphanedSubagentMessages.value]
+})
 
-  if (normalized.includes("/") || normalized.endsWith(".md") || normalized.endsWith(".vue") || normalized.endsWith(".ts"))
-    return normalized
-
-  return null
-}
-
-function collectPathsFromUnknown(value: unknown, files: Set<string>) {
-  if (typeof value === "string") {
-    const maybePath = normalizePossiblePath(value)
-    if (maybePath)
-      files.add(maybePath)
-    return
-  }
-
-  if (Array.isArray(value)) {
-    value.forEach(entry => collectPathsFromUnknown(entry, files))
-    return
-  }
-
-  if (!value || typeof value !== "object")
-    return
-
-  Object.entries(value).forEach(([key, entry]) => {
-    if (["path", "filePath", "file_path", "paths", "glob"].includes(key))
-      collectPathsFromUnknown(entry, files)
-  })
-}
-
-function extractTouchedFiles(toolCalls: Array<{ call?: { name?: string; args?: unknown } }> | undefined) {
-  const files = new Set<string>()
-
-  toolCalls?.forEach((toolCall) => {
-    const callName = toolCall.call?.name
-    if (!callName)
-      return
-
-    if ([
-      "read_file",
-      "write_file",
-      "edit_file",
-      "ls",
-      "glob",
-      "grep",
-      "execute",
-    ].includes(callName)) {
-      collectPathsFromUnknown(toolCall.call?.args, files)
-    }
-  })
-
-  return Array.from(files).slice(0, 8)
-}
-
-function handleComposerKeydown(event: KeyboardEvent) {
-  if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
-    event.preventDefault()
-    void sendMessage()
-  }
-}
+/** Reserve space under the transcript so the typing bubble can fade out without shifting the composer. */
+const showTypingSlot = computed(() => {
+  return visibleMessages.value.length > 0 || isStreamActive.value
+})
 
 const currentSlideContext = computed(() => {
   const route = unref(nav.currentSlideRoute)
@@ -407,6 +261,15 @@ const currentSlideContext = computed(() => {
     route: route && typeof route === "object" ? String(Reflect.get(route, "path") || "") || undefined : undefined,
     title: typeof title === "string" && title.trim() ? title.trim() : undefined,
   }
+})
+
+const sendShortcutLabel = computed(() => {
+  if (typeof navigator === "undefined")
+    return "Cmd/Ctrl+Enter to send"
+
+  return /Mac|iPhone|iPad|iPod/.test(navigator.platform)
+    ? "Cmd+Enter to send"
+    : "Ctrl+Enter to send"
 })
 
 function isNearBottom(element: HTMLElement) {
@@ -436,6 +299,13 @@ async function scrollMessagesToBottom(force = false) {
   element.scrollTop = element.scrollHeight
 }
 
+function handleComposerKeydown(event: KeyboardEvent) {
+  if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+    event.preventDefault()
+    void sendMessage()
+  }
+}
+
 async function startNewThread() {
   if (!stream || isSwitchingThread.value)
     return
@@ -443,7 +313,7 @@ async function startNewThread() {
   isSwitchingThread.value = true
   runtimeErrorMessage.value = ""
   didResetMissingThread.value = false
-  clearSlidevAgentThreadId(runtimeConfig.assistantId, runtimeConfig.deckId)
+  clearStoredThread()
 
   try {
     await stream.switchThread(null)
@@ -475,27 +345,29 @@ async function sendMessage() {
 
   isSubmitting.value = true
 
+  const nextMessage = {
+    type: "human",
+    content,
+  }
+
   try {
-    await stream.submit({
-      messages: [
-        {
-          type: "human",
-          content,
+    await stream.submit(
+      { messages: [nextMessage] },
+      {
+        context: {
+          currentSlide: currentSlideContext.value,
         },
-      ],
-    }, {
-      context: {
-        currentSlide: currentSlideContext.value,
+        multitaskStrategy: "enqueue",
+        optimisticValues: previous => buildOptimisticValues(previous, nextMessage),
       },
-      multitaskStrategy: "enqueue",
-    })
+    )
   }
   catch (error) {
     const message = error instanceof Error ? error.message : String(error)
 
     if (message.includes("Unreachable state when creating run")) {
-      clearSlidevAgentThreadId(runtimeConfig.assistantId, runtimeConfig.deckId)
-      stream.switchThread(null)
+      clearStoredThread()
+      void stream.switchThread(null)
       fallbackMessages.value = [
         {
           type: "assistant",
@@ -506,12 +378,7 @@ async function sendMessage() {
     }
 
     const configMessage = getConfigurationErrorMessage(message)
-    if (configMessage) {
-      runtimeErrorMessage.value = configMessage
-      return
-    }
-
-    runtimeErrorMessage.value = message
+    runtimeErrorMessage.value = configMessage || message
   }
   finally {
     isSubmitting.value = false
@@ -533,8 +400,11 @@ onMounted(() => {
   void scrollMessagesToBottom(true)
 })
 
-watch(() => slidevAgentUiState.isOpen, () => {
+watch(() => slidevAgentUiState.isOpen, (isOpen) => {
   updateViewportReservation()
+
+  if (isOpen)
+    void scrollMessagesToBottom(true)
 })
 
 onBeforeUnmount(() => {
@@ -544,16 +414,17 @@ onBeforeUnmount(() => {
   document.documentElement.style.setProperty("--slidev-agent-reserved-width", "0px")
 })
 
-watch(messages, () => {
+watch(visibleMessages, () => {
   void scrollMessagesToBottom()
 })
 
-watch(subagentActivities, () => {
+watch(trackedActiveSubagentCount, () => {
   void scrollMessagesToBottom()
 })
 
-watch(activeSubagentCount, () => {
-  void scrollMessagesToBottom()
+watch(isStreamActive, (active) => {
+  if (active)
+    void scrollMessagesToBottom()
 })
 </script>
 
@@ -565,10 +436,10 @@ watch(activeSubagentCount, () => {
       aria-label="LangChain slide authoring agent"
     >
       <div class="slidev-agent-sidebar__header">
-        <div>
-          <p class="slidev-agent-sidebar__eyebrow">LangChain Slidev Agent</p>
-          <h2 class="slidev-agent-sidebar__title">Slide Author</h2>
+        <div class="slidev-agent-sidebar__header-copy">
+          <p class="slidev-agent-sidebar__eyebrow">Slidev Agent</p>
         </div>
+
         <div class="slidev-agent-sidebar__header-actions">
           <span
             class="slidev-agent-sidebar__connection-dot"
@@ -587,87 +458,40 @@ watch(activeSubagentCount, () => {
         </div>
       </div>
 
-    <p v-if="runtimeErrorMessage" class="slidev-agent-sidebar__error-banner">
-      {{ runtimeErrorMessage }}
-    </p>
+      <p v-if="runtimeErrorMessage" class="slidev-agent-sidebar__error-banner">
+        {{ runtimeErrorMessage }}
+      </p>
 
       <div
         ref="messagesContainer"
         class="slidev-agent-sidebar__messages"
         @scroll="handleMessagesScroll"
       >
-        <div
-          v-for="(message, index) in messages"
-          :key="index"
-          class="slidev-agent-sidebar__message"
-          :class="`slidev-agent-sidebar__message--${message.role}`"
-        >
-          <template v-if="message.kind === 'tool'">
-            <div class="slidev-agent-sidebar__tool-annotation">
-              <span class="slidev-agent-sidebar__tool-dot" />
-              <span class="slidev-agent-sidebar__tool-name">{{ message.toolName }}</span>
-              <span v-if="message.argsSummary" class="slidev-agent-sidebar__tool-args">
-                {{ message.argsSummary }}
-              </span>
-              <span class="slidev-agent-sidebar__tool-summary">
-                {{ message.resultSummary }}
-              </span>
-            </div>
-          </template>
-          <template v-else>
-            <div class="slidev-agent-sidebar__message-role">
-              {{ message.roleLabel }}
-            </div>
-            <div class="slidev-agent-sidebar__message-body">
-              {{ message.content }}
-            </div>
-          </template>
-        </div>
+        <MessageItem
+          v-for="message in visibleMessages"
+          :key="message.key"
+          :message="message"
+        />
 
         <div
-          v-for="subagent in subagentActivities"
-          :key="subagent.id"
-          class="slidev-agent-sidebar__message slidev-agent-sidebar__message--subagent"
+          v-if="showTypingSlot"
+          class="slidev-agent-sidebar__typing-slot"
+          :aria-busy="isStreamActive ? 'true' : 'false'"
         >
-          <div class="slidev-agent-sidebar__message-role">Subagent</div>
-          <div class="slidev-agent-sidebar__subagent-inline-card">
-            <div class="slidev-agent-sidebar__subagent-inline-header">
-              <span class="slidev-agent-sidebar__subagent-name">{{ subagent.type }}</span>
-              <span
-                class="slidev-agent-sidebar__subagent-status"
-                :class="`slidev-agent-sidebar__subagent-status--${subagent.status}`"
-              >
-                {{ subagent.status }}
-              </span>
+          <Transition name="slidev-agent-typing-fade">
+            <div
+              v-if="isStreamActive"
+              key="typing-trail"
+              class="slidev-agent-sidebar__typing-trail"
+              aria-live="polite"
+              aria-label="Assistant is responding"
+            >
+              <TypingDots :active="true" />
             </div>
-
-            <p v-if="subagent.taskSummary" class="slidev-agent-sidebar__subagent-inline-task">
-              {{ subagent.taskSummary }}
-            </p>
-
-            <div v-if="subagent.latestToolName" class="slidev-agent-sidebar__subagent-inline-tool">
-              <span class="slidev-agent-sidebar__subagent-inline-tool-name">{{ subagent.latestToolName }}</span>
-              <span v-if="subagent.latestToolArgs" class="slidev-agent-sidebar__subagent-inline-tool-args">
-                {{ subagent.latestToolArgs }}
-              </span>
-              <span v-if="subagent.latestToolSummary" class="slidev-agent-sidebar__subagent-inline-tool-summary">
-                {{ subagent.latestToolSummary }}
-              </span>
-            </div>
-
-            <div v-if="subagent.files.length > 0" class="slidev-agent-sidebar__subagent-files">
-              <span
-                v-for="file in subagent.files"
-                :key="file"
-                class="slidev-agent-sidebar__subagent-file"
-              >
-                {{ file }}
-              </span>
-            </div>
-          </div>
+          </Transition>
         </div>
 
-        <p v-if="messages.length === 0" class="slidev-agent-sidebar__empty-state">
+        <p v-if="visibleMessages.length === 0 && !isStreamActive" class="slidev-agent-sidebar__empty-state">
           Start a conversation to have the agent inspect and edit your Slidev deck.
         </p>
       </div>
@@ -680,6 +504,7 @@ watch(activeSubagentCount, () => {
           rows="4"
           @keydown="handleComposerKeydown"
         />
+
         <div class="slidev-agent-sidebar__composer-footer">
           <div class="slidev-agent-sidebar__composer-actions">
             <button
@@ -690,14 +515,15 @@ watch(activeSubagentCount, () => {
             >
               {{ isSwitchingThread ? "Resetting..." : "New thread" }}
             </button>
-            <span class="slidev-agent-sidebar__composer-hint">Cmd+Enter to send</span>
+            <span class="slidev-agent-sidebar__composer-hint">{{ sendShortcutLabel }}</span>
           </div>
+
           <button
             class="slidev-agent-sidebar__submit"
             type="submit"
             :disabled="!draft.trim() || isSubmitting || isSwitchingThread"
           >
-            {{ isSubmitting ? "Working..." : "Send" }}
+            Send
           </button>
         </div>
       </form>
@@ -751,6 +577,10 @@ watch(activeSubagentCount, () => {
   gap: 0.75rem;
 }
 
+.slidev-agent-sidebar__header-copy {
+  min-width: 0;
+}
+
 .slidev-agent-sidebar__header-actions {
   display: inline-flex;
   align-items: center;
@@ -771,6 +601,39 @@ watch(activeSubagentCount, () => {
   font-weight: 600;
 }
 
+.slidev-agent-typing-fade-enter-active,
+.slidev-agent-typing-fade-leave-active {
+  transition: opacity 0.28s ease;
+}
+
+.slidev-agent-typing-fade-enter-from,
+.slidev-agent-typing-fade-leave-to {
+  opacity: 0;
+}
+
+.slidev-agent-sidebar__typing-slot {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-top: 0.25rem;
+  /* Matches bubble + margin so fade-out does not collapse the thread layout */
+  min-height: 3.05rem;
+  box-sizing: border-box;
+}
+
+.slidev-agent-sidebar__typing-trail {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: flex-start;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.9rem;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
 .slidev-agent-sidebar__close {
   border: 0;
   background: transparent;
@@ -785,16 +648,16 @@ watch(activeSubagentCount, () => {
   height: 0.7rem;
   border-radius: 999px;
   flex: 0 0 auto;
-  background: #ef4444;
-  box-shadow: 0 0 0.65rem rgba(239, 68, 68, 0.65);
-}
-
-.slidev-agent-sidebar__connection-dot--connected {
   background: #22c55e;
   box-shadow: 0 0 0.75rem rgba(34, 197, 94, 0.75);
 }
 
-.slidev-agent-sidebar__connection-dot--disconnected {
+.slidev-agent-sidebar__connection-dot--fallback {
+  background: #f59e0b;
+  box-shadow: 0 0 0.75rem rgba(245, 158, 11, 0.6);
+}
+
+.slidev-agent-sidebar__connection-dot--error {
   background: #ef4444;
   box-shadow: 0 0 0.75rem rgba(239, 68, 68, 0.75);
 }
@@ -808,115 +671,6 @@ watch(activeSubagentCount, () => {
   color: #fecaca;
   font-size: 0.84rem;
   line-height: 1.45;
-}
-
-.slidev-agent-sidebar__subagent-name {
-  font-size: 0.86rem;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.slidev-agent-sidebar__subagent-status {
-  border-radius: 999px;
-  padding: 0.18rem 0.45rem;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: rgba(148, 163, 184, 0.18);
-  color: #cbd5e1;
-}
-
-.slidev-agent-sidebar__subagent-status--running {
-  background: rgba(37, 99, 235, 0.22);
-  color: #bfdbfe;
-}
-
-.slidev-agent-sidebar__subagent-status--pending {
-  background: rgba(245, 158, 11, 0.2);
-  color: #fde68a;
-}
-
-.slidev-agent-sidebar__subagent-status--complete {
-  background: rgba(34, 197, 94, 0.2);
-  color: #bbf7d0;
-}
-
-.slidev-agent-sidebar__subagent-status--error {
-  background: rgba(239, 68, 68, 0.18);
-  color: #fecaca;
-}
-
-.slidev-agent-sidebar__subagent-files {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.slidev-agent-sidebar__subagent-file {
-  display: inline-flex;
-  align-items: center;
-  max-width: 100%;
-  padding: 0.25rem 0.5rem;
-  border-radius: 999px;
-  background: rgba(30, 41, 59, 0.9);
-  font-size: 0.76rem;
-  color: #dbeafe;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.slidev-agent-sidebar__message--subagent {
-  background: rgba(15, 23, 42, 0.72);
-  border: 1px solid rgba(148, 163, 184, 0.16);
-}
-
-.slidev-agent-sidebar__subagent-inline-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-}
-
-.slidev-agent-sidebar__subagent-inline-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.slidev-agent-sidebar__subagent-inline-task {
-  margin: 0;
-  font-size: 0.82rem;
-  line-height: 1.45;
-  color: #e2e8f0;
-}
-
-.slidev-agent-sidebar__subagent-inline-tool {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  font-size: 0.75rem;
-  line-height: 1.4;
-}
-
-.slidev-agent-sidebar__subagent-inline-tool-name {
-  font-weight: 600;
-  color: #dbeafe;
-  text-transform: lowercase;
-}
-
-.slidev-agent-sidebar__subagent-inline-tool-args {
-  color: #cbd5e1;
-}
-
-.slidev-agent-sidebar__subagent-inline-tool-summary {
-  color: #93c5fd;
-}
-
-.slidev-agent-sidebar__subagent-inline-tool-summary::before {
-  content: "•";
-  margin-right: 0.3rem;
-  color: rgba(148, 163, 184, 0.6);
 }
 
 .slidev-agent-sidebar__messages {
@@ -934,75 +688,6 @@ watch(activeSubagentCount, () => {
   line-height: 1.5;
   color: #cbd5e1;
   text-align: center;
-}
-
-.slidev-agent-sidebar__message {
-  padding: 0.75rem;
-  border-radius: 0.9rem;
-  background: rgba(30, 41, 59, 0.85);
-}
-
-.slidev-agent-sidebar__message--human {
-  background: rgba(37, 99, 235, 0.2);
-}
-
-.slidev-agent-sidebar__message--tool {
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  border: 0;
-}
-
-.slidev-agent-sidebar__message-role {
-  margin-bottom: 0.35rem;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #93c5fd;
-}
-
-.slidev-agent-sidebar__message-body {
-  white-space: pre-wrap;
-  line-height: 1.45;
-  font-size: 0.92rem;
-}
-
-.slidev-agent-sidebar__tool-annotation {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  padding: 0 0.1rem;
-  font-size: 0.74rem;
-  line-height: 1.4;
-}
-
-.slidev-agent-sidebar__tool-dot {
-  width: 0.38rem;
-  height: 0.38rem;
-  border-radius: 999px;
-  background: rgba(96, 165, 250, 0.85);
-  flex: 0 0 auto;
-}
-
-.slidev-agent-sidebar__tool-name {
-  font-weight: 600;
-  color: #dbeafe;
-  text-transform: lowercase;
-}
-
-.slidev-agent-sidebar__tool-args {
-  color: #cbd5e1;
-}
-
-.slidev-agent-sidebar__tool-summary {
-  color: #93c5fd;
-}
-
-.slidev-agent-sidebar__tool-summary::before {
-  content: "•";
-  margin-right: 0.3rem;
-  color: rgba(148, 163, 184, 0.6);
 }
 
 .slidev-agent-sidebar__composer {

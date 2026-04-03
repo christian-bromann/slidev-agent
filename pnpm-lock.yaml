@@ -12,13 +12,13 @@ importers:
     dependencies:
       '@langchain/anthropic':
         specifier: latest
-        version: 1.3.25(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))
+        version: 1.3.25(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))
       '@langchain/langgraph':
         specifier: latest
-        version: 1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
+        version: 1.2.6(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
       '@slidev/cli':
         specifier: ^52.14.1
-        version: 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@types/markdown-it@14.1.2)(@types/node@22.19.15)(@vue/compiler-sfc@3.5.31)(lightningcss@1.32.0)(markdown-it@14.1.1)(postcss@8.5.8)(tsx@4.21.0)
+        version: 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@types/markdown-it@14.1.2)(@types/node@25.5.0)(@vue/compiler-sfc@3.5.31)(lightningcss@1.32.0)(markdown-it@14.1.1)(playwright-chromium@1.59.1)(postcss@8.5.8)(tsx@4.21.0)
       '@slidev/theme-default':
         specifier: latest
         version: 0.25.0
@@ -35,44 +35,51 @@ importers:
   packages/slidev-agent:
     dependencies:
       '@langchain/anthropic':
-        specifier: '*'
-        version: 1.3.25(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))
-      '@langchain/google-genai':
-        specifier: '*'
-        version: 2.1.26(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))
+        specifier: ^1.3.26
+        version: 1.3.26(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))
+      '@langchain/google':
+        specifier: ^0.1.9
+        version: 0.1.9(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))
       '@langchain/langgraph':
-        specifier: '*'
-        version: 1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
+        specifier: ^1.2.6
+        version: 1.2.6(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
       '@langchain/langgraph-cli':
-        specifier: latest
-        version: 1.1.17(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(@langchain/langgraph-checkpoint@1.0.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6))))(@langchain/langgraph-sdk@1.8.2(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3)))(@langchain/langgraph@1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6))(openai@6.33.0(zod@4.3.6))(typescript@5.9.3)
+        specifier: ^1.1.17
+        version: 1.1.17(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(@langchain/langgraph-checkpoint@1.0.1(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6))))(@langchain/langgraph-sdk@1.8.5(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3)))(@langchain/langgraph@1.2.6(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6))(openai@6.33.0(zod@4.3.6))(typescript@5.9.3)
       '@langchain/openai':
-        specifier: '*'
-        version: 1.4.0(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))
-      '@langchain/openrouter':
-        specifier: '*'
-        version: 0.1.9(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(zod@4.3.6)
+        specifier: ^1.4.1
+        version: 1.4.1(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))
       '@langchain/vue':
-        specifier: latest
-        version: 0.3.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))
+        specifier: ^0.3.4
+        version: 0.3.4(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))
       '@slidev/cli':
         specifier: ^52.14.1
-        version: 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@types/markdown-it@14.1.2)(@types/node@22.19.15)(@vue/compiler-sfc@3.5.31)(lightningcss@1.32.0)(markdown-it@14.1.1)(postcss@8.5.8)(tsx@4.21.0)
+        version: 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@types/markdown-it@14.1.2)(@types/node@25.5.0)(@vue/compiler-sfc@3.5.31)(lightningcss@1.32.0)(markdown-it@14.1.1)(playwright-chromium@1.59.1)(postcss@8.5.8)(tsx@4.21.0)
       deepagents:
-        specifier: latest
-        version: 1.8.6(langsmith@0.5.15(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3))
+        specifier: ^1.8.8
+        version: 1.8.8(langsmith@0.5.15(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3))
       hono:
-        specifier: latest
-        version: 4.12.9
+        specifier: ^4.12.10
+        version: 4.12.10
       langchain:
-        specifier: latest
-        version: 1.2.38(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3))
+        specifier: ^1.2.39
+        version: 1.2.39(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3))
       vue:
         specifier: ^3.5.0
         version: 3.5.31(typescript@5.9.3)
       zod:
-        specifier: latest
+        specifier: ^4.3.6
         version: 4.3.6
+    devDependencies:
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.5.0
+      agent-browser:
+        specifier: ^0.24.0
+        version: 0.24.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
 packages:
 
@@ -599,10 +606,6 @@ packages:
   '@floating-ui/utils@0.2.11':
     resolution: {integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==}
 
-  '@google/generative-ai@0.24.1':
-    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
-    engines: {node: '>=18.0.0'}
-
   '@hono/node-server@1.19.12':
     resolution: {integrity: sha512-txsUW4SQ1iilgE0l9/e9VQWmELXifEFvmdA1j6WFh/aFPj99hIntrSsq/if0UWyGVkmrRPKA1wCeP+UCr1B9Uw==}
     engines: {node: '>=18.14.1'}
@@ -656,15 +659,21 @@ packages:
     peerDependencies:
       '@langchain/core': ^1.1.34
 
-  '@langchain/core@1.1.37':
-    resolution: {integrity: sha512-HkXKhtu8KqInPMtn0gNwwUwQtIL2exDhqEo0Ee8NByKuceoAXii+d0j3dbhOJrz43v4QKdB22H0QTSrFAzx5sA==}
-    engines: {node: '>=20'}
-
-  '@langchain/google-genai@2.1.26':
-    resolution: {integrity: sha512-202ZBVEIXxKhNbDzktLKSffb9pNfrYBGPV7j54nvAR0uqfoh5reRlX8wmOZEDflojvX/GHc69jTOsc0eZKgRsA==}
+  '@langchain/anthropic@1.3.26':
+    resolution: {integrity: sha512-8gfnM1MzZkb3HVD0WjWeb/HFdP4cNGWSokhBtrwW0qSJN+b1j9oBMwWZaVdd+VBKsx4hqzv0bdrMzWje0TMw+g==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@langchain/core': ^1.1.33
+      '@langchain/core': ^1.1.38
+
+  '@langchain/core@1.1.38':
+    resolution: {integrity: sha512-C340wH1YL10CiVOFlEpQMp0zQE85/eBLKX/gi1Lv7shAyUmR3CQ0t/mXlCd5RsZa6ntAN1kDJnp64ArWey9XAA==}
+    engines: {node: '>=20'}
+
+  '@langchain/google@0.1.9':
+    resolution: {integrity: sha512-52hSJSpu8Zjm35E5jgZfnXpBtOXhhzsUhCAGgBM/LH9n81jXEPFl7FPCWt9egoAhtw6ScK6qwxds0pgXsENr8A==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@langchain/core': ^1.0.0
 
   '@langchain/langgraph-api@1.1.17':
     resolution: {integrity: sha512-hu5V47k9dzxr2svDWb7Riro3QNSj+h7xRaixN6cBJPGvulUt5xfA7GJ7Z12NRTmLCBRhE0Fp+rPnO6qHSN2LXw==}
@@ -710,6 +719,26 @@ packages:
       vue:
         optional: true
 
+  '@langchain/langgraph-sdk@1.8.5':
+    resolution: {integrity: sha512-cX+bVfTnwxBEsgzgb0+hXK7+vOmoCmYDQ4RMyC34LKWBhn9HpH3Qu66P9Dxa53fAnl1WbHTyVDRNfs5b++ZjmA==}
+    peerDependencies:
+      '@langchain/core': ^1.1.16
+      react: ^18 || ^19
+      react-dom: ^18 || ^19
+      svelte: ^4.0.0 || ^5.0.0
+      vue: ^3.0.0
+    peerDependenciesMeta:
+      '@langchain/core':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+
   '@langchain/langgraph-ui@1.1.17':
     resolution: {integrity: sha512-M4CiGjM3wT+natby6vcHIotjFATtZXzRafRXx97+u/hOlhggIr4aLqxz2yOnL9Z97LL7gp2iEoMmsXvFuFX0Rw==}
     engines: {node: ^18.19.0 || >=20.16.0}
@@ -726,20 +755,14 @@ packages:
       zod-to-json-schema:
         optional: true
 
-  '@langchain/openai@1.4.0':
-    resolution: {integrity: sha512-qKNEve3NYcSJPEJFuynGIf2D0FlbrCfnIhTlkKQyqNgg5qZr1NcGpUuM4iXl0kFJbG+JfcxyiTqrTZAvk3y5sQ==}
+  '@langchain/openai@1.4.1':
+    resolution: {integrity: sha512-jaHk4TnLqWrQ1KYmavvwCImW6x8pBy6LLTK73tzSMg7HBLbq0g/l7EkpMcxZWDOvyufuCXUqO2bj47apcOhw6Q==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@langchain/core': ^1.1.37
+      '@langchain/core': ^1.1.38
 
-  '@langchain/openrouter@0.1.9':
-    resolution: {integrity: sha512-WSaI8h+QdRVFCq8Pdr5I51crhcFnCjavXJeo6nqVszc3csUffqntTOq5yAaLFvPuSi6+kOnYl0FOBsZPoLIJew==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      '@langchain/core': ^1.0.0
-
-  '@langchain/vue@0.3.1':
-    resolution: {integrity: sha512-V8feVaOHpuC5VfgXJ5q67JKE5fkxP/9OPhlRLlmX6ZLrsM1w3qX5olmVBZTU5sMQfR039kFvr6BiNOQYEe31mA==}
+  '@langchain/vue@0.3.4':
+    resolution: {integrity: sha512-M4SN+5JDd+627JDeuAQSnqnvdRKah88ogxWONxTn5kE9t0kWHv0RfHc2sdkMOZHW1ktZjmm3PKGmCzqmmBphCQ==}
     peerDependencies:
       '@langchain/core': ^1.1.27
       vue: ^3.0.0
@@ -1401,6 +1424,9 @@ packages:
   '@types/node@22.19.15':
     resolution: {integrity: sha512-F0R/h2+dsy5wJAUe3tAU6oqa2qbWY5TpNfL/RGmo1y38hiyO1w3x2jPtt76wmuaJI4DQnOBu21cNXQ2STIUUWg==}
 
+  '@types/node@25.5.0':
+    resolution: {integrity: sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw==}
+
   '@types/triple-beam@1.3.5':
     resolution: {integrity: sha512-6WaYesThRMCl19iryMYP7/x2OVgCtbIVflDGFpWnb9irXI3UjYE4AzmYuiUKY1AJstGijoY+MgUszMgRxIYTYw==}
 
@@ -1642,6 +1668,14 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  agent-base@7.1.4:
+    resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
+    engines: {node: '>= 14'}
+
+  agent-browser@0.24.0:
+    resolution: {integrity: sha512-GawZbaVLB+hghqwhv4eLlXb66VKFcCnkDWQ56kF56W98zzMUymryYG8mn2JnWonpWRwXvv9kzhdezBKFW2tKKA==}
+    hasBin: true
+
   alien-signals@3.1.2:
     resolution: {integrity: sha512-d9dYqZTS90WLiU0I5c6DHj/HcKkF8ZyGN3G5x8wSbslulz70KOxaqCT0hQCo9KOyhVqzqGojvNdJXoTumZOtcw==}
 
@@ -1705,6 +1739,9 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
+  bignumber.js@9.3.1:
+    resolution: {integrity: sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ==}
+
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
@@ -1723,6 +1760,9 @@ packages:
 
   buffer-crc32@0.2.13:
     resolution: {integrity: sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==}
+
+  buffer-equal-constant-time@1.0.1:
+    resolution: {integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==}
 
   bundle-name@4.1.0:
     resolution: {integrity: sha512-tjwM5exMg6BGRI+kNmTntNsvdZS1X8BFYS6tnJ2hdH0kVxM6/eVZ2xy+FqStSWvYmtfFMDLIxurorHwDKfDz5Q==}
@@ -2070,6 +2110,10 @@ packages:
   dagre-d3-es@7.0.14:
     resolution: {integrity: sha512-P4rFMVq9ESWqmOgK+dlXvOtLwYg0i7u0HBGJER0LZDJT2VHIPAMZ/riPxqJceWMStH5+E61QxFra9kIS3AqdMg==}
 
+  data-uri-to-buffer@4.0.1:
+    resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
+    engines: {node: '>= 12'}
+
   dayjs@1.11.20:
     resolution: {integrity: sha512-YbwwqR/uYpeoP4pu043q+LTDLFBLApUP6VxRihdfNTqu4ubqMlGDLd6ErXhEgsyvY0K6nCs7nggYumAN+9uEuQ==}
 
@@ -2105,8 +2149,8 @@ packages:
       babel-plugin-macros:
         optional: true
 
-  deepagents@1.8.6:
-    resolution: {integrity: sha512-wemd86wwaHeZr1uYZ+C651fAUUsW4P6ipR86e7I6g4cmquLKQc5SOw4KZUepB/ROEgPznHBJbszX5KzTaUuLlA==}
+  deepagents@1.8.8:
+    resolution: {integrity: sha512-XezuNwXtjqyY/mGlYJsvMK6Ryn9Np6PVrI7y+h9aXQ/nF5wwSep9INN+qk32YvAgqC6lPA8vBnf5uxQ0JI06CQ==}
     peerDependencies:
       langsmith: '>=0.5.15 <1.0.0'
 
@@ -2185,6 +2229,9 @@ packages:
 
   duplexer@0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
+
+  ecdsa-sig-formatter@1.0.11:
+    resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -2286,6 +2333,9 @@ packages:
     resolution: {integrity: sha512-zCnTtlxNoAiDc3gqY2aYAWFx7XWWiasuF2K8Me5WbN8otHKTUKBwjPtNpRs/rbUZm7KxWAaNj7P1a/p52GbVug==}
     engines: {node: '>=0.10.0'}
 
+  extend@3.0.2:
+    resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
+
   extract-zip@2.0.1:
     resolution: {integrity: sha512-GDhU9ntwuKyGXdZBUgTIe+vXnWj0fppUEtMDL0+idd5Sta8TGpHssn/eusA9mrPr9qNDym6SxAYZjNvCn/9RBg==}
     engines: {node: '>= 10.17.0'}
@@ -2316,6 +2366,10 @@ packages:
   fecha@4.2.3:
     resolution: {integrity: sha512-OP2IUU6HeYKJi3i0z4A19kHMQoLVs4Hc+DPqqxI2h/DPZHTm/vjsfC6P0b4jCMy14XizLBqvndQ+UilD7707Jw==}
 
+  fetch-blob@3.2.0:
+    resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
+    engines: {node: ^12.20 || >= 14.13}
+
   figures@6.1.0:
     resolution: {integrity: sha512-d+l3qxjSesT4V7v2fh+QnmFnUWv9lSpjarhShNTgBOfA0ttejbQUAlHLitbjkoRiDulW0OPoQPYIGhIC8ohejg==}
     engines: {node: '>=18'}
@@ -2343,6 +2397,10 @@ packages:
   fn.name@1.1.0:
     resolution: {integrity: sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==}
 
+  formdata-polyfill@4.0.10:
+    resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
+    engines: {node: '>=12.20.0'}
+
   fraction.js@5.3.4:
     resolution: {integrity: sha512-1X1NTtiJphryn/uLQz3whtY6jK3fTqoE3ohKs0tT+Ujr1W59oopxmoEh7Lu5p6vBaPbgoM0bzveAW4Qi5RyWDQ==}
 
@@ -2364,6 +2422,14 @@ packages:
 
   fzf@0.5.2:
     resolution: {integrity: sha512-Tt4kuxLXFKHy8KT40zwsUPUkg1CrsgY25FxA2U/j/0WgEDCk3ddc/zLTCCcbSHX9FcKtLuVaDGtGE/STWC+j3Q==}
+
+  gaxios@7.1.4:
+    resolution: {integrity: sha512-bTIgTsM2bWn3XklZISBTQX7ZSddGW+IO3bMdGaemHZ3tbqExMENHLx6kKZ/KlejgrMtj8q7wBItt51yegqalrA==}
+    engines: {node: '>=18'}
+
+  gcp-metadata@8.1.2:
+    resolution: {integrity: sha512-zV/5HKTfCeKWnxG0Dmrw51hEWFGfcF2xiXqcA3+J90WDuP0SvoiSO5ORvcBsifmx/FoIjgQN3oNOGaQ5PhLFkg==}
+    engines: {node: '>=18'}
 
   generic-names@4.0.0:
     resolution: {integrity: sha512-ySFolZQfw9FoDb3ed9d80Cm9f0+r7qj+HJkWjeD9RBfpxEVTlVhol+gvaQB/78WbwYfbnNh8nWHHBSlg072y6A==}
@@ -2410,6 +2476,14 @@ packages:
     resolution: {integrity: sha512-1pgFdhK3J2LeM+dVf2Pd424yHx2ou338lC0ErNP2hPx4j8eW1Sp0XqSjNxtk6Tc4Kr5wlWtSvz8cn2yb7/SG/w==}
     engines: {node: '>=20'}
 
+  google-auth-library@10.6.2:
+    resolution: {integrity: sha512-e27Z6EThmVNNvtYASwQxose/G57rkRuaRbQyxM2bvYLLX/GqWZ5chWq2EBoUchJbCc57eC9ArzO5wMsEmWftCw==}
+    engines: {node: '>=18'}
+
+  google-logging-utils@1.1.3:
+    resolution: {integrity: sha512-eAmLkjDjAFCVXg7A1unxHsLf961m6y17QFqXqAXGj/gVkKFrEICfStRfwUlGNfeCEjNRa32JEWOUTlYXPyyKvA==}
+    engines: {node: '>=14'}
+
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
@@ -2437,8 +2511,8 @@ packages:
   hey-listen@1.0.8:
     resolution: {integrity: sha512-COpmrF2NOg4TBWUJ5UVyaCU2A88wEMkUPK4hNqyCkqHbxT92BbvfjoSozkAIIm6XhicGlJHhFdullInrdhwU8Q==}
 
-  hono@4.12.9:
-    resolution: {integrity: sha512-wy3T8Zm2bsEvxKZM5w21VdHDDcwVS1yUFFY6i8UobSsKfFceT7TOwhbhfKsDyx7tYQlmRM5FLpIuYvNFyjctiA==}
+  hono@4.12.10:
+    resolution: {integrity: sha512-mx/p18PLy5og9ufies2GOSUqep98Td9q4i/EF6X7yJgAiIopxqdfIO3jbqsi3jRgTgw88jMDEzVKi+V2EF+27w==}
     engines: {node: '>=16.9.0'}
 
   hookable@5.5.3:
@@ -2452,6 +2526,10 @@ packages:
 
   htmlparser2@10.1.0:
     resolution: {integrity: sha512-VTZkM9GWRAtEpveh7MSF6SjjrpNVNNVJfFup7xTY3UpFtm67foy9HDVXneLtFVt4pMz5kZtgNcvCniNFb1hlEQ==}
+
+  https-proxy-agent@7.0.6:
+    resolution: {integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==}
+    engines: {node: '>= 14'}
 
   https@1.0.0:
     resolution: {integrity: sha512-4EC57ddXrkaF0x83Oj8sM6SLQHAWXw90Skqu2M4AEWENZ3F02dFJE/GARA8igO79tcgYqGrD7ae4f5L3um2lgg==}
@@ -2596,6 +2674,9 @@ packages:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
 
+  jose@6.2.2:
+    resolution: {integrity: sha512-d7kPDd34KO/YnzaDOlikGpOurfF0ByC2sEV4cANCtdqLlTfBlw2p14O/5d/zv40gJPbIQxfES3nSx1/oYNyuZQ==}
+
   js-tiktoken@1.0.21:
     resolution: {integrity: sha512-biOj/6M5qdgx5TKjDnFT1ymSpM5tbd3ylwDtrQvFQSu0Z7bBYko2dF+W/aUkXUPuk6IVpRxk/3Q2sHOzGlS36g==}
 
@@ -2615,6 +2696,9 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  json-bigint@1.0.0:
+    resolution: {integrity: sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==}
+
   json-schema-to-ts@3.1.1:
     resolution: {integrity: sha512-+DWg8jCJG2TEnpy7kOm/7/AxaYoaRbjVB4LFZLySZlWn8exGs3A4OLJR966cVvU26N7X9TWxl+Jsw7dzAqKT6g==}
     engines: {node: '>=16'}
@@ -2626,6 +2710,12 @@ packages:
 
   jszip@3.10.1:
     resolution: {integrity: sha512-xXDvecyTpGLrqFrvkrUSoxxfJI5AH7U8zxxtVclpsUtMCq4JQ290LY8AW5c7Ggnr/Y/oK+bQMbqK2qmtk3pN4g==}
+
+  jwa@2.0.1:
+    resolution: {integrity: sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==}
+
+  jws@4.0.1:
+    resolution: {integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==}
 
   katex@0.16.44:
     resolution: {integrity: sha512-EkxoDTk8ufHqHlf9QxGwcxeLkWRR3iOuYfRpfORgYfqc8s13bgb+YtRY59NK5ZpRaCwq1kqA6a5lpX8C/eLphQ==}
@@ -2652,17 +2742,11 @@ packages:
   kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
 
-  langchain@1.2.37:
-    resolution: {integrity: sha512-zjd0TpMfX8V440XJVavRmzLSvojVv5WZ7M9LWNtgYo0MDFTiWlCdnFNdHo1sZlNoI+8aSdLsVl/WXKtucyhwEA==}
+  langchain@1.2.39:
+    resolution: {integrity: sha512-3foM0VptB5NFnd3drLTVieZhNBcITS/9lnaKzfGgJ7a7YL0eEAM0ZHofMOi86V2KbpeSaHrJ08vOOMSc+CpfEQ==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@langchain/core': ^1.1.36
-
-  langchain@1.2.38:
-    resolution: {integrity: sha512-viAHrUDbHZPHoRJ849L4LyabOx6P0tkKXoUUyLFaWv9pwPrbnyb88Eo/zoBrVL3vfwXBaCqHpkGqkjc7+M2hkA==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      '@langchain/core': ^1.1.37
+      '@langchain/core': ^1.1.38
 
   langium@4.2.1:
     resolution: {integrity: sha512-zu9QWmjpzJcomzdJQAHgDVhLGq5bLosVak1KVa40NzQHXfqr4eAHupvnPOVXEoLkg6Ocefvf/93d//SB7du4YQ==}
@@ -3010,8 +3094,17 @@ packages:
   nanotar@0.3.0:
     resolution: {integrity: sha512-Kv2JYYiCzt16Kt5QwAc9BFG89xfPNBx+oQL4GQXD9nLqPkZBiNaqaCWtwnbk/q7UVsTYevvM1b0UF8zmEI4pCg==}
 
+  node-domexception@1.0.0:
+    resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
+    engines: {node: '>=10.5.0'}
+    deprecated: Use your platform's native DOMException instead
+
   node-fetch-native@1.6.7:
     resolution: {integrity: sha512-g9yhqoedzIUm0nTnTqAQvueMPVOuIY16bqgAJJC8XOOubYFNwz6IER9qs0Gq2Xd0+CecCKFjtdDTMA4u4xG06Q==}
+
+  node-fetch@3.3.2:
+    resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   node-releases@2.0.36:
     resolution: {integrity: sha512-TdC8FSgHz8Mwtw9g5L4gR/Sh9XhSP/0DEkQxfEFXOpiul5IiHgHan2VhYYb6agDSfp4KuvltmGApc8HMgUrIkA==}
@@ -3173,6 +3266,16 @@ packages:
 
   plantuml-encoder@1.4.0:
     resolution: {integrity: sha512-sxMwpDw/ySY1WB2CE3+IdMuEcWibJ72DDOsXLkSmEaSzwEUaYBT6DWgOfBiHGCux4q433X6+OEFWjlVqp7gL6g==}
+
+  playwright-chromium@1.59.1:
+    resolution: {integrity: sha512-aTsPenkxsr9np4vIHuMEND6comqepVvzbL0MwkozFNliwGZjTqrBUQ7TF6Ay1ZIU/e7rcUpGsCTUG+nqwxG2Xw==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright-core@1.59.1:
+    resolution: {integrity: sha512-HBV/RJg81z5BiiZ9yPzIiClYV/QMsDCKUyogwH9p3MCP6IYjUFu/MActgYAvK0oWyV9NlwM3GLBjADyWgydVyg==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   points-on-curve@0.2.0:
     resolution: {integrity: sha512-0mYKnYYe9ZcqMCWhUjItv/oHjvgEsfKvnUTg8sAtnHr3GVy7rGkXCb6d5cSyqrWqL4k81b9CPg3urd+T7aop3A==}
@@ -3605,6 +3708,9 @@ packages:
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
+  undici-types@7.18.2:
+    resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
+
   unhead@2.1.12:
     resolution: {integrity: sha512-iTHdWD9ztTunOErtfUFk6Wr11BxvzumcYJ0CzaSCBUOEtg+DUZ9+gnE99i8QkLFT2q1rZD48BYYGXpOZVDLYkA==}
 
@@ -3865,6 +3971,10 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  web-streams-polyfill@3.3.3:
+    resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
+    engines: {node: '>= 8'}
 
   webpack-virtual-modules@0.6.2:
     resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
@@ -4365,15 +4475,13 @@ snapshots:
 
   '@floating-ui/utils@0.2.11': {}
 
-  '@google/generative-ai@0.24.1': {}
-
-  '@hono/node-server@1.19.12(hono@4.12.9)':
+  '@hono/node-server@1.19.12(hono@4.12.10)':
     dependencies:
-      hono: 4.12.9
+      hono: 4.12.10
 
-  '@hono/zod-validator@0.7.6(hono@4.12.9)(zod@4.3.6)':
+  '@hono/zod-validator@0.7.6(hono@4.12.10)(zod@4.3.6)':
     dependencies:
-      hono: 4.12.9
+      hono: 4.12.10
       zod: 4.3.6
 
   '@iconify-json/carbon@1.2.20':
@@ -4419,13 +4527,19 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@langchain/anthropic@1.3.25(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))':
+  '@langchain/anthropic@1.3.25(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))':
     dependencies:
       '@anthropic-ai/sdk': 0.74.0(zod@4.3.6)
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
       zod: 4.3.6
 
-  '@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6))':
+  '@langchain/anthropic@1.3.26(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))':
+    dependencies:
+      '@anthropic-ai/sdk': 0.74.0(zod@4.3.6)
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
+      zod: 4.3.6
+
+  '@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6))':
     dependencies:
       '@cfworker/json-schema': 4.1.1
       '@standard-schema/spec': 1.1.0
@@ -4445,27 +4559,31 @@ snapshots:
       - openai
       - ws
 
-  '@langchain/google-genai@2.1.26(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))':
+  '@langchain/google@0.1.9(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))':
     dependencies:
-      '@google/generative-ai': 0.24.1
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
-      uuid: 11.1.0
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
+      eventsource-parser: 3.0.6
+      google-auth-library: 10.6.2
+      jose: 6.2.2
+      uuid: 10.0.0
+    transitivePeerDependencies:
+      - supports-color
 
-  '@langchain/langgraph-api@1.1.17(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(@langchain/langgraph-checkpoint@1.0.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6))))(@langchain/langgraph-sdk@1.8.2(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3)))(@langchain/langgraph@1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6))(openai@6.33.0(zod@4.3.6))(typescript@5.9.3)':
+  '@langchain/langgraph-api@1.1.17(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(@langchain/langgraph-checkpoint@1.0.1(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6))))(@langchain/langgraph-sdk@1.8.5(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3)))(@langchain/langgraph@1.2.6(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6))(openai@6.33.0(zod@4.3.6))(typescript@5.9.3)':
     dependencies:
       '@babel/code-frame': 7.29.0
-      '@hono/node-server': 1.19.12(hono@4.12.9)
-      '@hono/zod-validator': 0.7.6(hono@4.12.9)(zod@4.3.6)
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
-      '@langchain/langgraph': 1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
-      '@langchain/langgraph-checkpoint': 1.0.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))
+      '@hono/node-server': 1.19.12(hono@4.12.10)
+      '@hono/zod-validator': 0.7.6(hono@4.12.10)(zod@4.3.6)
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
+      '@langchain/langgraph': 1.2.6(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
+      '@langchain/langgraph-checkpoint': 1.0.1(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))
       '@langchain/langgraph-ui': 1.1.17
       '@types/json-schema': 7.0.15
       '@typescript/vfs': 1.6.4(typescript@5.9.3)
       dedent: 1.7.2
       dotenv: 16.6.1
       exit-hook: 4.0.0
-      hono: 4.12.9
+      hono: 4.12.10
       langsmith: 0.5.15(openai@6.33.0(zod@4.3.6))
       open: 10.2.0
       semver: 7.7.4
@@ -4478,7 +4596,7 @@ snapshots:
       winston-console-format: 1.0.8
       zod: 4.3.6
     optionalDependencies:
-      '@langchain/langgraph-sdk': 1.8.2(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))
+      '@langchain/langgraph-sdk': 1.8.5(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))
     transitivePeerDependencies:
       - '@opentelemetry/api'
       - '@opentelemetry/exporter-trace-otlp-proto'
@@ -4488,16 +4606,16 @@ snapshots:
       - supports-color
       - ws
 
-  '@langchain/langgraph-checkpoint@1.0.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))':
+  '@langchain/langgraph-checkpoint@1.0.1(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))':
     dependencies:
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
       uuid: 10.0.0
 
-  '@langchain/langgraph-cli@1.1.17(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(@langchain/langgraph-checkpoint@1.0.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6))))(@langchain/langgraph-sdk@1.8.2(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3)))(@langchain/langgraph@1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6))(openai@6.33.0(zod@4.3.6))(typescript@5.9.3)':
+  '@langchain/langgraph-cli@1.1.17(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(@langchain/langgraph-checkpoint@1.0.1(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6))))(@langchain/langgraph-sdk@1.8.5(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3)))(@langchain/langgraph@1.2.6(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6))(openai@6.33.0(zod@4.3.6))(typescript@5.9.3)':
     dependencies:
       '@babel/code-frame': 7.29.0
       '@commander-js/extra-typings': 13.1.0(commander@13.1.0)
-      '@langchain/langgraph-api': 1.1.17(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(@langchain/langgraph-checkpoint@1.0.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6))))(@langchain/langgraph-sdk@1.8.2(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3)))(@langchain/langgraph@1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6))(openai@6.33.0(zod@4.3.6))(typescript@5.9.3)
+      '@langchain/langgraph-api': 1.1.17(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(@langchain/langgraph-checkpoint@1.0.1(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6))))(@langchain/langgraph-sdk@1.8.5(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3)))(@langchain/langgraph@1.2.6(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6))(openai@6.33.0(zod@4.3.6))(typescript@5.9.3)
       chokidar: 4.0.3
       commander: 13.1.0
       create-langgraph: 1.1.5
@@ -4529,14 +4647,24 @@ snapshots:
       - typescript
       - ws
 
-  '@langchain/langgraph-sdk@1.8.2(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))':
+  '@langchain/langgraph-sdk@1.8.2(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))':
     dependencies:
       '@types/json-schema': 7.0.15
       p-queue: 9.1.0
       p-retry: 7.1.1
       uuid: 13.0.0
     optionalDependencies:
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
+      vue: 3.5.31(typescript@5.9.3)
+
+  '@langchain/langgraph-sdk@1.8.5(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))':
+    dependencies:
+      '@types/json-schema': 7.0.15
+      p-queue: 9.1.0
+      p-retry: 7.1.1
+      uuid: 13.0.0
+    optionalDependencies:
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
       vue: 3.5.31(typescript@5.9.3)
 
   '@langchain/langgraph-ui@1.1.17':
@@ -4547,11 +4675,11 @@ snapshots:
       esbuild-plugin-tailwindcss: 2.2.0
       zod: 4.3.6
 
-  '@langchain/langgraph@1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)':
+  '@langchain/langgraph@1.2.6(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)':
     dependencies:
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
-      '@langchain/langgraph-checkpoint': 1.0.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))
-      '@langchain/langgraph-sdk': 1.8.2(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
+      '@langchain/langgraph-checkpoint': 1.0.1(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))
+      '@langchain/langgraph-sdk': 1.8.2(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))
       '@standard-schema/spec': 1.1.0
       uuid: 10.0.0
       zod: 4.3.6
@@ -4561,29 +4689,19 @@ snapshots:
       - svelte
       - vue
 
-  '@langchain/openai@1.4.0(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))':
+  '@langchain/openai@1.4.1(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))':
     dependencies:
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
       js-tiktoken: 1.0.21
       openai: 6.33.0(zod@4.3.6)
       zod: 4.3.6
     transitivePeerDependencies:
       - ws
 
-  '@langchain/openrouter@0.1.9(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(zod@4.3.6)':
+  '@langchain/vue@0.3.4(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))':
     dependencies:
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
-      '@langchain/openai': 1.4.0(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))
-      eventsource-parser: 3.0.6
-      openai: 6.33.0(zod@4.3.6)
-    transitivePeerDependencies:
-      - ws
-      - zod
-
-  '@langchain/vue@0.3.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))':
-    dependencies:
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
-      '@langchain/langgraph-sdk': 1.8.2(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
+      '@langchain/langgraph-sdk': 1.8.5(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))
       vue: 3.5.31(typescript@5.9.3)
     transitivePeerDependencies:
       - react
@@ -4907,7 +5025,7 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@slidev/cli@52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@types/markdown-it@14.1.2)(@types/node@22.19.15)(@vue/compiler-sfc@3.5.31)(lightningcss@1.32.0)(markdown-it@14.1.1)(postcss@8.5.8)(tsx@4.21.0)':
+  '@slidev/cli@52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@types/markdown-it@14.1.2)(@types/node@25.5.0)(@vue/compiler-sfc@3.5.31)(lightningcss@1.32.0)(markdown-it@14.1.1)(playwright-chromium@1.59.1)(postcss@8.5.8)(tsx@4.21.0)':
     dependencies:
       '@antfu/ni': 28.3.0
       '@antfu/utils': 9.3.0
@@ -4919,13 +5037,13 @@ snapshots:
       '@shikijs/markdown-it': 4.0.2
       '@shikijs/twoslash': 4.0.2(typescript@5.9.3)
       '@shikijs/vitepress-twoslash': 4.0.2(@nuxt/kit@3.21.2)(typescript@5.9.3)
-      '@slidev/client': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
-      '@slidev/parser': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
-      '@slidev/types': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      '@slidev/client': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      '@slidev/parser': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      '@slidev/types': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
       '@unocss/extractor-mdc': 66.6.7
       '@unocss/reset': 66.6.7
-      '@vitejs/plugin-vue': 6.0.5(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
-      '@vitejs/plugin-vue-jsx': 5.1.5(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
+      '@vitejs/plugin-vue': 6.0.5(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
+      '@vitejs/plugin-vue-jsx': 5.1.5(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
       ansis: 4.2.0
       chokidar: 5.0.0
       cli-progress: 3.12.0
@@ -4964,21 +5082,23 @@ snapshots:
       source-map-js: 1.2.1
       typescript: 5.9.3
       unhead: 2.1.12
-      unocss: 66.6.7(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      unocss: 66.6.7(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
       unplugin-icons: 23.0.1(@vue/compiler-sfc@3.5.31)
       unplugin-vue-components: 31.1.0(@nuxt/kit@3.21.2)(vue@3.5.31(typescript@5.9.3))
-      unplugin-vue-markdown: 30.0.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      unplugin-vue-markdown: 30.0.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
       untun: 0.1.3
       uqr: 0.1.2
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
-      vite-plugin-inspect: 11.3.3(@nuxt/kit@3.21.2)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
-      vite-plugin-remote-assets: 2.1.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
-      vite-plugin-static-copy: 3.4.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
-      vite-plugin-vue-server-ref: 1.0.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
-      vitefu: 1.1.2(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite-plugin-inspect: 11.3.3(@nuxt/kit@3.21.2)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      vite-plugin-remote-assets: 2.1.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      vite-plugin-static-copy: 3.4.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      vite-plugin-vue-server-ref: 1.0.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
+      vitefu: 1.1.2(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
       vue: 3.5.31(typescript@5.9.3)
       yaml: 2.8.3
       yargs: 18.0.0
+    optionalDependencies:
+      playwright-chromium: 1.59.1
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -5010,7 +5130,7 @@ snapshots:
       - terser
       - tsx
 
-  '@slidev/client@52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))':
+  '@slidev/client@52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:
       '@antfu/utils': 9.3.0
       '@iconify-json/carbon': 1.2.20
@@ -5019,9 +5139,9 @@ snapshots:
       '@shikijs/engine-javascript': 4.0.2
       '@shikijs/monaco': 4.0.2
       '@shikijs/vitepress-twoslash': 4.0.2(@nuxt/kit@3.21.2)(typescript@5.9.3)
-      '@slidev/parser': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      '@slidev/parser': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
       '@slidev/rough-notation': 0.1.0
-      '@slidev/types': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      '@slidev/types': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
       '@typescript/ata': 0.9.8(typescript@5.9.3)
       '@unhead/vue': 2.1.12(vue@3.5.31(typescript@5.9.3))
       '@unocss/extractor-mdc': 66.6.7
@@ -5045,7 +5165,7 @@ snapshots:
       shiki: 4.0.2
       shiki-magic-move: 1.3.0(shiki@4.0.2)(vue@3.5.31(typescript@5.9.3))
       typescript: 5.9.3
-      unocss: 66.6.7(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      unocss: 66.6.7(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
       vue: 3.5.31(typescript@5.9.3)
       vue-router: 5.0.4(@vue/compiler-sfc@3.5.31)(vue@3.5.31(typescript@5.9.3))
       yaml: 2.8.3
@@ -5069,10 +5189,10 @@ snapshots:
       - svelte
       - vite
 
-  '@slidev/parser@52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))':
+  '@slidev/parser@52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:
       '@antfu/utils': 9.3.0
-      '@slidev/types': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      '@slidev/types': 52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
       yaml: 2.8.3
     transitivePeerDependencies:
       - '@emnapi/core'
@@ -5110,23 +5230,23 @@ snapshots:
 
   '@slidev/types@0.47.5': {}
 
-  '@slidev/types@52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))':
+  '@slidev/types@52.14.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@nuxt/kit@3.21.2)(@vue/compiler-sfc@3.5.31)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:
       '@antfu/utils': 9.3.0
       '@shikijs/markdown-it': 4.0.2
-      '@vitejs/plugin-vue': 6.0.5(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
-      '@vitejs/plugin-vue-jsx': 5.1.5(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
+      '@vitejs/plugin-vue': 6.0.5(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
+      '@vitejs/plugin-vue-jsx': 5.1.5(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
       katex: 0.16.44
       mermaid: 11.13.0
       monaco-editor: 0.55.1
       shiki: 4.0.2
-      unocss: 66.6.7(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      unocss: 66.6.7(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
       unplugin-icons: 23.0.1(@vue/compiler-sfc@3.5.31)
-      unplugin-vue-markdown: 30.0.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
-      vite-plugin-inspect: 11.3.3(@nuxt/kit@3.21.2)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
-      vite-plugin-remote-assets: 2.1.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
-      vite-plugin-static-copy: 3.4.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
-      vite-plugin-vue-server-ref: 1.0.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
+      unplugin-vue-markdown: 30.0.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      vite-plugin-inspect: 11.3.3(@nuxt/kit@3.21.2)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      vite-plugin-remote-assets: 2.1.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      vite-plugin-static-copy: 3.4.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      vite-plugin-vue-server-ref: 1.0.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
       vue: 3.5.31(typescript@5.9.3)
       vue-router: 5.0.4(@vue/compiler-sfc@3.5.31)(vue@3.5.31(typescript@5.9.3))
     transitivePeerDependencies:
@@ -5378,6 +5498,10 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
+  '@types/node@25.5.0':
+    dependencies:
+      undici-types: 7.18.2
+
   '@types/triple-beam@1.3.5': {}
 
   '@types/trusted-types@2.0.7':
@@ -5391,7 +5515,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 22.19.15
+      '@types/node': 25.5.0
     optional: true
 
   '@typescript/ata@0.9.8(typescript@5.9.3)':
@@ -5536,7 +5660,7 @@ snapshots:
     dependencies:
       '@unocss/core': 66.6.7
 
-  '@unocss/vite@66.6.7(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))':
+  '@unocss/vite@66.6.7(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@unocss/config': 66.6.7
@@ -5547,29 +5671,29 @@ snapshots:
       pathe: 2.0.3
       tinyglobby: 0.2.15
       unplugin-utils: 0.3.1
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
 
   '@upsetjs/venn.js@2.0.0':
     optionalDependencies:
       d3-selection: 3.0.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
 
-  '@vitejs/plugin-vue-jsx@5.1.5(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))':
+  '@vitejs/plugin-vue-jsx@5.1.5(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-syntax-typescript': 7.28.6(@babel/core@7.29.0)
       '@babel/plugin-transform-typescript': 7.28.6(@babel/core@7.29.0)
       '@rolldown/pluginutils': 1.0.0-rc.12
       '@vue/babel-plugin-jsx': 2.0.1(@babel/core@7.29.0)
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
       vue: 3.5.31(typescript@5.9.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@6.0.5(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.5(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.2
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
       vue: 3.5.31(typescript@5.9.3)
 
   '@volar/language-core@2.4.28':
@@ -5741,6 +5865,10 @@ snapshots:
 
   acorn@8.16.0: {}
 
+  agent-base@7.1.4: {}
+
+  agent-browser@0.24.0: {}
+
   alien-signals@3.1.2: {}
 
   ansi-regex@5.0.1: {}
@@ -5793,6 +5921,8 @@ snapshots:
 
   baseline-browser-mapping@2.10.12: {}
 
+  bignumber.js@9.3.1: {}
+
   binary-extensions@2.3.0: {}
 
   birpc@2.9.0: {}
@@ -5810,6 +5940,8 @@ snapshots:
       update-browserslist-db: 1.2.3(browserslist@4.28.1)
 
   buffer-crc32@0.2.13: {}
+
+  buffer-equal-constant-time@1.0.1: {}
 
   bundle-name@4.1.0:
     dependencies:
@@ -6192,6 +6324,8 @@ snapshots:
       d3: 7.9.0
       lodash-es: 4.17.23
 
+  data-uri-to-buffer@4.0.1: {}
+
   dayjs@1.11.20: {}
 
   debug@2.6.9:
@@ -6210,12 +6344,12 @@ snapshots:
 
   dedent@1.7.2: {}
 
-  deepagents@1.8.6(langsmith@0.5.15(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3)):
+  deepagents@1.8.8(langsmith@0.5.15(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3)):
     dependencies:
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
-      '@langchain/langgraph': 1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
+      '@langchain/langgraph': 1.2.6(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
       fast-glob: 3.3.3
-      langchain: 1.2.37(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3))
+      langchain: 1.2.39(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3))
       langsmith: 0.5.15(openai@6.33.0(zod@4.3.6))
       micromatch: 4.0.8
       yaml: 2.8.3
@@ -6303,6 +6437,10 @@ snapshots:
       '@drauu/core': 1.0.0
 
   duplexer@0.1.2: {}
+
+  ecdsa-sig-formatter@1.0.11:
+    dependencies:
+      safe-buffer: 5.1.2
 
   ee-first@1.1.1: {}
 
@@ -6442,6 +6580,8 @@ snapshots:
     dependencies:
       is-extendable: 0.1.1
 
+  extend@3.0.2: {}
+
   extract-zip@2.0.1:
     dependencies:
       debug: 4.4.3
@@ -6476,6 +6616,11 @@ snapshots:
 
   fecha@4.2.3: {}
 
+  fetch-blob@3.2.0:
+    dependencies:
+      node-domexception: 1.0.0
+      web-streams-polyfill: 3.3.3
+
   figures@6.1.0:
     dependencies:
       is-unicode-supported: 2.1.0
@@ -6508,6 +6653,10 @@ snapshots:
 
   fn.name@1.1.0: {}
 
+  formdata-polyfill@4.0.10:
+    dependencies:
+      fetch-blob: 3.2.0
+
   fraction.js@5.3.4: {}
 
   framesync@6.1.2:
@@ -6522,6 +6671,22 @@ snapshots:
   fuse.js@7.1.0: {}
 
   fzf@0.5.2: {}
+
+  gaxios@7.1.4:
+    dependencies:
+      extend: 3.0.2
+      https-proxy-agent: 7.0.6
+      node-fetch: 3.3.2
+    transitivePeerDependencies:
+      - supports-color
+
+  gcp-metadata@8.1.2:
+    dependencies:
+      gaxios: 7.1.4
+      google-logging-utils: 1.1.3
+      json-bigint: 1.0.0
+    transitivePeerDependencies:
+      - supports-color
 
   generic-names@4.0.0:
     dependencies:
@@ -6570,6 +6735,19 @@ snapshots:
     dependencies:
       ini: 6.0.0
 
+  google-auth-library@10.6.2:
+    dependencies:
+      base64-js: 1.5.1
+      ecdsa-sig-formatter: 1.0.11
+      gaxios: 7.1.4
+      gcp-metadata: 8.1.2
+      google-logging-utils: 1.1.3
+      jws: 4.0.1
+    transitivePeerDependencies:
+      - supports-color
+
+  google-logging-utils@1.1.3: {}
+
   graceful-fs@4.2.11: {}
 
   gray-matter@4.0.3:
@@ -6607,7 +6785,7 @@ snapshots:
 
   hey-listen@1.0.8: {}
 
-  hono@4.12.9: {}
+  hono@4.12.10: {}
 
   hookable@5.5.3: {}
 
@@ -6621,6 +6799,13 @@ snapshots:
       domhandler: 5.0.3
       domutils: 3.2.2
       entities: 7.0.1
+
+  https-proxy-agent@7.0.6:
+    dependencies:
+      agent-base: 7.1.4
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
 
   https@1.0.0: {}
 
@@ -6715,6 +6900,8 @@ snapshots:
 
   jiti@2.6.1: {}
 
+  jose@6.2.2: {}
+
   js-tiktoken@1.0.21:
     dependencies:
       base64-js: 1.5.1
@@ -6732,6 +6919,10 @@ snapshots:
 
   jsesc@3.1.0: {}
 
+  json-bigint@1.0.0:
+    dependencies:
+      bignumber.js: 9.3.1
+
   json-schema-to-ts@3.1.1:
     dependencies:
       '@babel/runtime': 7.29.2
@@ -6745,6 +6936,17 @@ snapshots:
       pako: 1.0.11
       readable-stream: 2.3.8
       setimmediate: 1.0.5
+
+  jwa@2.0.1:
+    dependencies:
+      buffer-equal-constant-time: 1.0.1
+      ecdsa-sig-formatter: 1.0.11
+      safe-buffer: 5.1.2
+
+  jws@4.0.1:
+    dependencies:
+      jwa: 2.0.1
+      safe-buffer: 5.1.2
 
   katex@0.16.44:
     dependencies:
@@ -6763,31 +6965,11 @@ snapshots:
 
   kuler@2.0.0: {}
 
-  langchain@1.2.37(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3)):
+  langchain@1.2.39(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3)):
     dependencies:
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
-      '@langchain/langgraph': 1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
-      '@langchain/langgraph-checkpoint': 1.0.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))
-      langsmith: 0.5.15(openai@6.33.0(zod@4.3.6))
-      uuid: 11.1.0
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - '@opentelemetry/api'
-      - '@opentelemetry/exporter-trace-otlp-proto'
-      - '@opentelemetry/sdk-trace-base'
-      - openai
-      - react
-      - react-dom
-      - svelte
-      - vue
-      - ws
-      - zod-to-json-schema
-
-  langchain@1.2.38(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(openai@6.33.0(zod@4.3.6))(vue@3.5.31(typescript@5.9.3)):
-    dependencies:
-      '@langchain/core': 1.1.37(openai@6.33.0(zod@4.3.6))
-      '@langchain/langgraph': 1.2.6(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
-      '@langchain/langgraph-checkpoint': 1.0.1(@langchain/core@1.1.37(openai@6.33.0(zod@4.3.6)))
+      '@langchain/core': 1.1.38(openai@6.33.0(zod@4.3.6))
+      '@langchain/langgraph': 1.2.6(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
+      '@langchain/langgraph-checkpoint': 1.0.1(@langchain/core@1.1.38(openai@6.33.0(zod@4.3.6)))
       langsmith: 0.5.15(openai@6.33.0(zod@4.3.6))
       uuid: 11.1.0
       zod: 4.3.6
@@ -7287,7 +7469,15 @@ snapshots:
 
   nanotar@0.3.0: {}
 
+  node-domexception@1.0.0: {}
+
   node-fetch-native@1.6.7: {}
+
+  node-fetch@3.3.2:
+    dependencies:
+      data-uri-to-buffer: 4.0.1
+      fetch-blob: 3.2.0
+      formdata-polyfill: 4.0.10
 
   node-releases@2.0.36: {}
 
@@ -7462,6 +7652,14 @@ snapshots:
       pathe: 2.0.3
 
   plantuml-encoder@1.4.0: {}
+
+  playwright-chromium@1.59.1:
+    dependencies:
+      playwright-core: 1.59.1
+    optional: true
+
+  playwright-core@1.59.1:
+    optional: true
 
   points-on-curve@0.2.0: {}
 
@@ -7913,6 +8111,8 @@ snapshots:
 
   undici-types@6.21.0: {}
 
+  undici-types@7.18.2: {}
+
   unhead@2.1.12:
     dependencies:
       hookable: 6.1.0
@@ -7942,7 +8142,7 @@ snapshots:
       unist-util-is: 6.0.1
       unist-util-visit-parents: 6.0.2
 
-  unocss@66.6.7(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
+  unocss@66.6.7(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       '@unocss/cli': 66.6.7
       '@unocss/core': 66.6.7
@@ -7960,7 +8160,7 @@ snapshots:
       '@unocss/transformer-compile-class': 66.6.7
       '@unocss/transformer-directives': 66.6.7
       '@unocss/transformer-variant-group': 66.6.7
-      '@unocss/vite': 66.6.7(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      '@unocss/vite': 66.6.7(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -7998,7 +8198,7 @@ snapshots:
     optionalDependencies:
       '@nuxt/kit': 3.21.2
 
-  unplugin-vue-markdown@30.0.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
+  unplugin-vue-markdown@30.0.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       '@mdit-vue/plugin-component': 3.0.2
       '@mdit-vue/plugin-frontmatter': 3.0.2
@@ -8006,7 +8206,7 @@ snapshots:
       markdown-exit: 1.0.0-beta.9
       unplugin: 2.3.11
       unplugin-utils: 0.3.1
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
 
   unplugin@2.3.11:
     dependencies:
@@ -8064,17 +8264,17 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-dev-rpc@1.1.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
+  vite-dev-rpc@1.1.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       birpc: 2.9.0
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
-      vite-hot-client: 2.1.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite-hot-client: 2.1.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
 
-  vite-hot-client@2.1.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
+  vite-hot-client@2.1.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
 
-  vite-plugin-inspect@11.3.3(@nuxt/kit@3.21.2)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
+  vite-plugin-inspect@11.3.3(@nuxt/kit@3.21.2)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       ansis: 4.2.0
       debug: 4.4.3
@@ -8084,43 +8284,43 @@ snapshots:
       perfect-debounce: 2.1.0
       sirv: 3.0.2
       unplugin-utils: 0.3.1
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
-      vite-dev-rpc: 1.1.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite-dev-rpc: 1.1.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
     optionalDependencies:
       '@nuxt/kit': 3.21.2
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-remote-assets@2.1.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
+  vite-plugin-remote-assets@2.1.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       debug: 4.4.3
       magic-string: 0.30.21
       node-fetch-native: 1.6.7
       ohash: 2.0.11
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-static-copy@3.4.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
+  vite-plugin-static-copy@3.4.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
       chokidar: 3.6.0
       p-map: 7.0.4
       picocolors: 1.1.1
       tinyglobby: 0.2.15
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
 
-  vite-plugin-vue-server-ref@1.0.0(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3)):
+  vite-plugin-vue-server-ref@1.0.0(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3)):
     dependencies:
       debug: 4.4.3
       klona: 2.0.6
       mlly: 1.8.2
       ufo: 1.6.3
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
       vue: 3.5.31(typescript@5.9.3)
     transitivePeerDependencies:
       - supports-color
 
-  vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3):
+  vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3):
     dependencies:
       esbuild: 0.27.4
       fdir: 6.5.0(picomatch@4.0.4)
@@ -8129,16 +8329,16 @@ snapshots:
       rollup: 4.60.1
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 22.19.15
+      '@types/node': 25.5.0
       fsevents: 2.3.3
       jiti: 2.6.1
       lightningcss: 1.32.0
       tsx: 4.21.0
       yaml: 2.8.3
 
-  vitefu@1.1.2(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
+  vitefu@1.1.2(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)):
     optionalDependencies:
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
 
   vscode-jsonrpc@8.2.0: {}
 
@@ -8193,6 +8393,8 @@ snapshots:
       '@vue/shared': 3.5.31
     optionalDependencies:
       typescript: 5.9.3
+
+  web-streams-polyfill@3.3.3: {}
 
   webpack-virtual-modules@0.6.2: {}
 

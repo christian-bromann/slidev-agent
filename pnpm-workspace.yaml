@@ -1,3 +1,7 @@
 packages:
   - "packages/*"
   - "example"
+allowBuilds:
+  agent-browser: true
+  esbuild: false
+  playwright-chromium: true

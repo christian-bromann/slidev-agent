@@ -4,11 +4,36 @@ import path from "node:path"
 const GENERATED_ROOT = ".slidev-agent/generated"
 const MANIFEST_PATH = ".slidev-agent/manifest.json"
 
-function env(name, fallback = "") {
+type BridgeConfig = {
+  apiUrl: string
+  deckId: string
+  namespace: string
+  entry: string
+  routePrefix: string
+  cwd: string
+}
+
+type DeckFile = {
+  path: string
+  content: string
+}
+
+type NormalizedPayload = {
+  entry: string
+  files: DeckFile[]
+}
+
+type BridgeManifest = {
+  entry: string
+  generatedRoot: string
+  files: string[]
+}
+
+function env(name: string, fallback = "") {
   return process.env[name]?.trim() || fallback
 }
 
-function resolveBridgeConfig(cwd) {
+function resolveBridgeConfig(cwd: string): BridgeConfig {
   return {
     apiUrl: env("SLIDEV_AGENT_API_URL"),
     deckId: env("SLIDEV_AGENT_DECK_ID"),
@@ -19,18 +44,18 @@ function resolveBridgeConfig(cwd) {
   }
 }
 
-function isRemoteBridgeEnabled(config) {
+function isRemoteBridgeEnabled(config: BridgeConfig) {
   return Boolean(config.apiUrl && config.deckId)
 }
 
-function normalizeRoutePrefix(routePrefix) {
+function normalizeRoutePrefix(routePrefix: string) {
   if (!routePrefix.startsWith("/"))
     return `/${routePrefix}`
 
   return routePrefix.replace(/\/$/, "")
 }
 
-function createDeckUrl(config) {
+function createDeckUrl(config: BridgeConfig) {
   const prefix = normalizeRoutePrefix(config.routePrefix)
   const url = new URL(`${prefix}/decks/${encodeURIComponent(config.deckId)}`, config.apiUrl)
 
@@ -40,7 +65,7 @@ function createDeckUrl(config) {
   return url
 }
 
-function normalizePayload(payload, fallbackEntry) {
+function normalizePayload(payload: any, fallbackEntry: string): NormalizedPayload {
   const entry = typeof payload.entry === "string" && payload.entry
     ? payload.entry
     : fallbackEntry
@@ -48,7 +73,7 @@ function normalizePayload(payload, fallbackEntry) {
   if (Array.isArray(payload.files)) {
     return {
       entry,
-      files: payload.files.map(file => ({
+      files: payload.files.map((file: any) => ({
         path: file.path,
         content: file.content,
       })),
@@ -68,27 +93,27 @@ function normalizePayload(payload, fallbackEntry) {
   throw new Error("Unsupported response shape. Expected `files` or `slides` in the bridge response.")
 }
 
-async function ensureParentDirectory(targetFile) {
+async function ensureParentDirectory(targetFile: string) {
   await mkdir(path.dirname(targetFile), { recursive: true })
 }
 
-async function writeManifest(cwd, manifest) {
+async function writeManifest(cwd: string, manifest: BridgeManifest) {
   const manifestFile = path.join(cwd, MANIFEST_PATH)
   await ensureParentDirectory(manifestFile)
   await writeFile(manifestFile, `${JSON.stringify(manifest, null, 2)}\n`, "utf8")
 }
 
-async function readManifest(cwd) {
+async function readManifest(cwd: string): Promise<BridgeManifest> {
   const manifestFile = path.join(cwd, MANIFEST_PATH)
   const content = await readFile(manifestFile, "utf8")
-  return JSON.parse(content)
+  return JSON.parse(content) as BridgeManifest
 }
 
 export async function pullRemoteSlides(cwd = process.cwd()) {
   const config = resolveBridgeConfig(cwd)
   if (!isRemoteBridgeEnabled(config)) {
     return {
-      mode: "local",
+      mode: "local" as const,
       entry: path.join(cwd, config.entry),
       manifest: null,
     }
@@ -115,7 +140,7 @@ export async function pullRemoteSlides(cwd = process.cwd()) {
     await writeFile(outputFile, file.content, "utf8")
   }
 
-  const manifest = {
+  const manifest: BridgeManifest = {
     entry: payload.entry,
     generatedRoot: GENERATED_ROOT,
     files: payload.files.map(file => file.path),
@@ -124,7 +149,7 @@ export async function pullRemoteSlides(cwd = process.cwd()) {
   await writeManifest(cwd, manifest)
 
   return {
-    mode: "remote",
+    mode: "remote" as const,
     entry: path.join(generatedRoot, payload.entry),
     manifest,
   }
@@ -138,7 +163,7 @@ export async function pushRemoteSlides(cwd = process.cwd()) {
   const manifest = await readManifest(cwd)
   const generatedRoot = path.join(cwd, manifest.generatedRoot)
 
-  const files = []
+  const files: DeckFile[] = []
   for (const filePath of manifest.files) {
     const absoluteFile = path.join(generatedRoot, filePath)
     files.push({
@@ -172,7 +197,7 @@ export async function resolveSlideEntry(cwd = process.cwd()) {
   await stat(entryFile)
 
   return {
-    mode: "local",
+    mode: "local" as const,
     entry: entryFile,
     manifest: null,
   }

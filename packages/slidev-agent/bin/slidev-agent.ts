@@ -6,7 +6,8 @@ import { spawn } from "node:child_process"
 import { createRequire } from "node:module"
 import path from "node:path"
 
-import { pullRemoteSlides, pushRemoteSlides, resolveSlideEntry } from "../lib/bridge.mjs"
+import { writeLanggraphJsonIfMissing } from "../lib/langgraph-init.js"
+import { pullRemoteSlides, pushRemoteSlides, resolveSlideEntry } from "../lib/bridge.js"
 
 const [, , command = "dev", ...rest] = process.argv
 const require = createRequire(import.meta.url)
@@ -15,7 +16,7 @@ function getNpxCommand() {
   return process.platform === "win32" ? "npx.cmd" : "npx"
 }
 
-function spawnCommand(commandName, args, options = {}) {
+function spawnCommand(commandName: string, args: string[], options: Record<string, unknown> = {}) {
   return spawn(commandName, args, {
     cwd: process.cwd(),
     stdio: "inherit",
@@ -23,7 +24,7 @@ function spawnCommand(commandName, args, options = {}) {
   })
 }
 
-function resolvePackageBin(packageName, preferredBinName) {
+function resolvePackageBin(packageName: string, preferredBinName?: string) {
   const packageJsonPath = require.resolve(`${packageName}/package.json`)
   const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"))
   const packageRoot = path.dirname(packageJsonPath)
@@ -43,13 +44,26 @@ function resolvePackageBin(packageName, preferredBinName) {
   throw new Error(`Could not resolve a binary for ${packageName}`)
 }
 
-async function fileExists(filePath) {
+async function fileExists(filePath: string) {
   try {
     await stat(filePath)
     return true
   }
   catch {
     return false
+  }
+}
+
+function ensureLanggraphJsonForDev(cwd: string) {
+  if (process.env.SLIDEV_AGENT_DISABLE_LANGGRAPH === "1")
+    return
+
+  try {
+    writeLanggraphJsonIfMissing(cwd)
+  }
+  catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    console.warn(`slidev-agent: could not create langgraph.json (${msg}). LangGraph dev will not start.`)
   }
 }
 
@@ -98,6 +112,9 @@ async function run() {
     ? [entry, ...rest]
     : [command, entry, ...rest]
 
+  if (command === "dev")
+    ensureLanggraphJsonForDev(process.cwd())
+
   const langgraphChild = command === "dev" ? await startLangGraphDev() : null
   const slidevChild = spawnCommand(getNpxCommand(), ["slidev", ...slidevArgs])
 
@@ -118,12 +135,12 @@ async function run() {
   process.on("SIGINT", () => shutdown(0))
   process.on("SIGTERM", () => shutdown(0))
 
-  langgraphChild?.on("exit", (code) => {
+  langgraphChild?.on("exit", (code: number | null) => {
     if (!isShuttingDown && (code ?? 0) !== 0)
       shutdown(code ?? 1)
   })
 
-  slidevChild.on("exit", (code) => {
+  slidevChild.on("exit", (code: number | null) => {
     shutdown(code ?? 1)
   })
 }

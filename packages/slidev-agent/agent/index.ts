@@ -2,6 +2,7 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 
 import { createDeepAgent, FilesystemBackend } from "deepagents"
+import { createInspectSlidePreviewTool } from "./slide-preview-tool.js"
 import { dynamicSystemPromptMiddleware } from "langchain"
 import { z } from "zod"
 
@@ -15,18 +16,14 @@ type SlidevDeepAgentOptions = {
 
 const providerPackageMap: Record<string, string> = {
   anthropic: "@langchain/anthropic",
-  google: "@langchain/google-genai",
-  "google-genai": "@langchain/google-genai",
+  google: "@langchain/google",
   openai: "@langchain/openai",
-  openrouter: "@langchain/openrouter",
 }
 
 const providerApiKeyMap: Record<string, string[]> = {
   anthropic: ["ANTHROPIC_API_KEY"],
   google: ["GOOGLE_API_KEY"],
-  "google-genai": ["GOOGLE_API_KEY"],
-  openai: ["OPENAI_API_KEY"],
-  openrouter: ["OPENROUTER_API_KEY"],
+  openai: ["OPENAI_API_KEY"]
 }
 
 export const slidevAgentContextSchema = z.object({
@@ -50,6 +47,7 @@ function resolveSystemPrompt(): string {
 
   return [
     "You are Slidev Agent, an expert presentation author for Slidev decks.",
+    "You have a **slidev** skill in your skills library (metadata is injected below). For non-trivial slides or Slidev features (animations, code blocks, diagrams, layouts, export), read that skill's SKILL.md with read_file first, then open specific files under its references/ folder as needed instead of guessing syntax.",
     "Your job is to create and revise deck files directly in the local Slidev project filesystem.",
     "Treat the filesystem as the source of truth for deck content.",
     "Prefer editing existing files over creating many new files when possible, but do not force large amounts of content into a single giant slide file.",
@@ -59,9 +57,11 @@ function resolveSystemPrompt(): string {
     "For larger decks or multi-slide additions, prefer splitting content into multiple imported slide files under /pages or another clear subdirectory.",
     "Use Slidev's importing-slides pattern (`src: ./pages/file.md`) to stitch those files into the main deck instead of streaming everything into one file.",
     "When a task involves creating or heavily redesigning one or more individual slides, delegate that work in parallel to the `slide_generator` subagent.",
+    "When you spin up subagents or describe that parallel work to the user, keep it brief but playful—warm and a little theatrical (e.g. assembling a tiny slide squad, handing off to specialists, cueing the next slide)—not stiff or purely procedural.",
     "The `slide_generator` subagent should create exactly one slide file at a requested path, typically in /pages.",
     "After subagents finish, you are responsible for updating the main deck entry file to reference or embed the generated slide files correctly using Slidev imports.",
     "When multiple slides are needed, prefer several smaller file writes in parallel over one long streaming write to a single file.",
+    "After importing a new slide into slides.md, include its 1-based slide URL index in the slide_generator task (or call inspect_slide_preview yourself) so layout can be verified against the running Slidev dev server.",
     "Explain major file changes briefly to the user after you finish.",
   ].join("\n")
 }
@@ -149,9 +149,12 @@ export function createSlidevDeepAgent(options: SlidevDeepAgentOptions = {}) {
   const rootDir = resolveRootDir(options.rootDir)
   const skills = options.skills || resolveSlidevSkillPaths(rootDir)
 
+  const inspectSlidePreview = createInspectSlidePreviewTool()
+
   return createDeepAgent({
     ...(model ? { model } : {}),
     systemPrompt,
+    tools: [inspectSlidePreview],
     ...(skills.length > 0 ? { skills } : {}),
     subagents: [
       {
@@ -159,12 +162,17 @@ export function createSlidevDeepAgent(options: SlidevDeepAgentOptions = {}) {
         description: "Create or redesign exactly one Slidev slide file at a requested path so the supervisor can parallelize multi-slide work.",
         systemPrompt: [
           "You are a specialized Slidev slide generation subagent.",
+          "Use the **slidev** skill from your skills list: read its SKILL.md, then references/*.md for the features you implement (animations, code, diagrams, layouts).",
           "Your responsibility is to create or revise exactly one slide file at the path requested by the supervisor.",
           "Produce one focused slide or imported slide fragment, not the entire deck.",
+          "Avoid cramming diagrams, dense grids, and long bullet lists onto one slide—split into additional slides if needed.",
           "Keep the output self-contained so it can be imported cleanly from the main deck with `src: ./pages/...`.",
           "Use valid Slidev markdown, frontmatter, layouts, components, and animations when they improve clarity.",
           "Do not update the main deck entry file such as /slides.md unless explicitly asked; the supervisor will stitch your slide into the deck.",
-          "When finished, report the file path you touched and a concise description of the slide you created.",
+          "Before you finish, if the task states the slide's 1-based index in the running deck (or the slide is already reachable at a known URL index), call the `inspect_slide_preview` tool with that slide number to check for visual overflow/clipping.",
+          "If the slide is not yet imported into slides.md or no slide number is given, skip `inspect_slide_preview` and say so; the supervisor can verify after importing.",
+          "If `inspect_slide_preview` reports overflow, revise the slide (simpler layout, smaller diagram, fewer columns, or split content) and re-check until clean or explain what still overflows.",
+          "When finished, report the file path you touched, a concise description of the slide, and whether preview inspection passed or was skipped.",
         ].join("\n"),
         ...(skills.length > 0 ? { skills } : {}),
       },
