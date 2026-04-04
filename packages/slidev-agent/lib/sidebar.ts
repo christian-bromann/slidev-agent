@@ -15,6 +15,8 @@ export type ToolCallResult = {
     args?: unknown
   }
   result?: unknown
+  /** From LangGraph SDK `getToolCallsWithResults`; omitted in some code paths. */
+  state?: "pending" | "completed" | "error"
 }
 
 export type StreamToolCall = ToolCallResult
@@ -41,6 +43,9 @@ export type SubagentActivity = {
   latestToolName: string
   latestToolHeadline: string
   latestToolArgs: string
+  /** Lifecycle of the **last** subagent tool only (max one row in the UI). */
+  latestToolState: "pending" | "completed" | "error"
+  latestToolStateLabel: string
   latestToolSummary: string
   files: string[]
   messageCount: number
@@ -146,7 +151,6 @@ export function truncateText(value: string, maxLength = 96) {
 
 const TOOL_HEADLINES: Record<string, string> = {
   slide_generator: "Generate or revise a slide",
-  inspect_slide_preview: "Check slide preview in the browser",
   read_file: "Read file",
   write_file: "Write file",
   edit_file: "Edit file",
@@ -209,6 +213,23 @@ export function formatToolArgs(args: unknown) {
     .join(" · ")
 }
 
+/** Prefer path-like fields; otherwise a compact JSON snapshot for subagent progress. */
+export function formatToolArgsWithFallback(args: unknown, maxLength = 140) {
+  const preferred = formatToolArgs(args)
+  if (preferred)
+    return preferred
+
+  if (!args || typeof args !== "object")
+    return ""
+
+  try {
+    return truncateText(JSON.stringify(args), maxLength)
+  }
+  catch {
+    return ""
+  }
+}
+
 function stringifyUnknownResult(value: unknown): string {
   if (typeof value === "string")
     return value
@@ -228,6 +249,34 @@ function stringifyUnknownResult(value: unknown): string {
     return text
 
   return ""
+}
+
+function getStreamToolCallState(entry: StreamToolCall | undefined): "pending" | "completed" | "error" {
+  if (!entry)
+    return "pending"
+
+  if (entry.state)
+    return entry.state
+
+  const result = entry.result
+  if (result == null)
+    return "pending"
+
+  if (typeof result === "object" && Reflect.get(result, "status") === "error")
+    return "error"
+
+  return "completed"
+}
+
+function labelForSubagentToolState(state: "pending" | "completed" | "error") {
+  switch (state) {
+    case "pending":
+      return "Running…"
+    case "completed":
+      return "Done"
+    case "error":
+      return "Error"
+  }
 }
 
 function extractSubagentTask(toolCall: { args?: Record<string, unknown> } | undefined) {
@@ -341,9 +390,12 @@ export function summarizeSubagent(subagent: StreamSubagent, activeSubagentIds: S
   const latestToolCall = subagent.toolCalls.at(-1)
   const latestToolName = latestToolCall?.call?.name || ""
   const latestToolHeadline = latestToolName ? toolCallHeadline(latestToolName) : ""
-  const latestToolArgs = formatToolArgs(latestToolCall?.call?.args)
-  const latestToolSummary = latestToolName
-    ? summarizeToolResult(latestToolName, stringifyUnknownResult(latestToolCall?.result))
+  const latestToolArgs = formatToolArgsWithFallback(latestToolCall?.call?.args)
+  const latestToolState = getStreamToolCallState(latestToolCall)
+  const latestToolStateLabel = labelForSubagentToolState(latestToolState)
+  const resultText = stringifyUnknownResult(latestToolCall?.result)
+  const latestToolSummary = latestToolName && latestToolState !== "pending"
+    ? summarizeToolResult(latestToolName, resultText)
     : ""
   const isActive = activeSubagentIds.has(subagent.id) || ["running", "pending"].includes(subagent.status)
   const status = isActive ? "running" : subagent.status
@@ -360,6 +412,8 @@ export function summarizeSubagent(subagent: StreamSubagent, activeSubagentIds: S
     latestToolName,
     latestToolHeadline,
     latestToolArgs,
+    latestToolState,
+    latestToolStateLabel,
     latestToolSummary,
     files,
     messageCount,

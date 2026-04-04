@@ -26,14 +26,17 @@
     "app",
     "dist",
     "components",
+    "lib",
     "public"
   ],
   "dependencies": {
     "@langchain/langgraph-cli": "^1.1.17",
     "@langchain/vue": "^0.3.4",
     "deepagents": "^1.8.8",
+    "dompurify": "^3.3.3",
     "hono": "^4.12.10",
     "langchain": "^1.2.39",
+    "marked": "^17.0.5",
     "zod": "^4.3.6"
   },
   "peerDependencies": {

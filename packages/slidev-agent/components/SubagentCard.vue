@@ -23,7 +23,15 @@ defineProps<{
     </p>
 
     <div v-if="subagent.latestToolHeadline" class="slidev-agent-subagent-card__tool">
-      <span class="slidev-agent-subagent-card__tool-name">{{ subagent.latestToolHeadline }}</span>
+      <div class="slidev-agent-subagent-card__tool-line">
+        <span class="slidev-agent-subagent-card__tool-name">{{ subagent.latestToolHeadline }}</span>
+        <span
+          class="slidev-agent-subagent-card__tool-state"
+          :class="`slidev-agent-subagent-card__tool-state--${subagent.latestToolState}`"
+        >
+          {{ subagent.latestToolStateLabel }}
+        </span>
+      </div>
       <span v-if="subagent.latestToolArgs" class="slidev-agent-subagent-card__tool-args">
         {{ subagent.latestToolArgs }}
       </span>
@@ -112,15 +120,48 @@ defineProps<{
 
 .slidev-agent-subagent-card__tool {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
+  flex-direction: column;
+  gap: 0.2rem;
   font-size: 0.68rem;
   line-height: 1.3;
+}
+
+.slidev-agent-subagent-card__tool-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .slidev-agent-subagent-card__tool-name {
   font-weight: 600;
   color: #dbeafe;
+}
+
+.slidev-agent-subagent-card__tool-state {
+  border-radius: 999px;
+  padding: 0.06rem 0.32rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+}
+
+.slidev-agent-subagent-card__tool-state--pending {
+  background: rgba(37, 99, 235, 0.22);
+  color: #bfdbfe;
+}
+
+.slidev-agent-subagent-card__tool-state--completed {
+  background: rgba(34, 197, 94, 0.18);
+  color: #bbf7d0;
+}
+
+.slidev-agent-subagent-card__tool-state--error {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fecaca;
 }
 
 .slidev-agent-subagent-card__tool-args {
