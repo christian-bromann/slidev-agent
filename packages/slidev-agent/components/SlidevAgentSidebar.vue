@@ -10,6 +10,7 @@ import {
   persistSlidevAgentThreadId,
   resolveSlidevAgentRuntimeConfig,
 } from "../lib/config"
+import { createSlidevHeadlessTools } from "../lib/headless-tool-impl"
 import {
   buildSidebarMessages,
   buildToolCallLookup,
@@ -25,6 +26,7 @@ import { setSlidevAgentOpen, slidevAgentUiState } from "../lib/state"
 
 const runtimeConfig = resolveSlidevAgentRuntimeConfig()
 const nav = useNav()
+const headlessTools = createSlidevHeadlessTools(nav)
 
 const draft = ref("")
 const isSubmitting = ref(false)
@@ -86,6 +88,7 @@ const stream = runtimeConfig.enabled
       fetchStateHistory: false,
       filterSubagentMessages: true,
       reconnectOnMount: true,
+      tools: headlessTools,
       onThreadId: (threadId) => {
         persistSlidevAgentThreadId(runtimeConfig.assistantId, runtimeConfig.deckId, threadId)
       },

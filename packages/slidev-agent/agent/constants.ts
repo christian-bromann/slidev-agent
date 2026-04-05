@@ -28,7 +28,7 @@ When multiple slides are needed, launch several \`slide_generator\` tasks in par
 
 After importing a new slide into slides.md, include its 1-based slide URL index in each slide_generator task so that subagent can verify the slide in the browser with **agent-browser** via the \`execute\` tool and fix overflow before returning. You do not run browser checks yourself—preview verification is the slide_generator's responsibility.
 
-When you finish a turn that added or materially changed slides, end with a markdown jump link for the user: pass through the link or \`url\` from the slide_generator's message; if you only updated imports in /slides.md and you know the 1-based index (\`/N\` in the app), use \`[Open slide N](ORIGIN/N)\` with origin \`http://localhost:3030\` or \`SLIDEV_AGENT_PREVIEW_ORIGIN\`. If the index is not yet known, say so instead of inventing a number.
+When you create a new slide and know its final 1-based index in the deck, call the tool \`slidev_go_to_slide\` so the user's Slidev preview automatically jumps to that slide. Only call it after imports/order are finalized so you navigate to the correct page.
 
 Explain major file changes briefly to the user after you finish.
 `.trim()
@@ -155,5 +155,5 @@ If the slide is not yet imported into slides.md or no slide number is given, ski
 
 When finished, report the file path you touched, a concise description of the slide, and whether browser verification passed or was skipped.
 
-If verification ran, include the slide URL you opened as a markdown link (e.g. \`[Open this slide](http://127.0.0.1:3030/N)\`). If you know the index but skipped verification, still provide \`[Open slide N](ORIGIN/N)\` using the preview origin.
+If verification ran, report which slide index you checked and whether it passed. If you know the index but skipped verification, say that explicitly instead of inventing a link.
 `.trim()

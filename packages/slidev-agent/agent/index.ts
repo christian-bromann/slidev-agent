@@ -8,6 +8,7 @@ import {
   SLIDEV_SLIDE_GENERATOR_SUBAGENT_DESCRIPTION,
   SLIDEV_SLIDE_GENERATOR_SYSTEM_PROMPT,
 } from "./constants.js"
+import { slidevGoToSlide } from "../lib/headless-tools.js"
 import { dynamicSystemPromptMiddleware } from "langchain"
 import { z } from "zod"
 
@@ -122,7 +123,7 @@ export function createSlidevDeepAgent(options: SlidevDeepAgentOptions = {}) {
   return createDeepAgent({
     ...(model ? { model } : {}),
     systemPrompt,
-    tools: [],
+    tools: [slidevGoToSlide],
     ...(skills.length > 0 ? { skills } : {}),
     subagents: [
       {

@@ -151,6 +151,7 @@ export function truncateText(value: string, maxLength = 96) {
 
 const TOOL_HEADLINES: Record<string, string> = {
   slide_generator: "Generate or revise a slide",
+  slidev_go_to_slide: "Open generated slide",
   read_file: "Read file",
   write_file: "Write file",
   edit_file: "Edit file",
@@ -183,6 +184,12 @@ export function toolCallHeadline(rawName: string) {
 
 export function summarizeToolResult(toolName: string, content: string) {
   const trimmed = content.trim()
+  if (toolName === "slidev_go_to_slide") {
+    const toolUse = JSON.parse(content)
+    const payload = toolUse[Object.keys(toolUse)[0]]
+    return `Page: ${payload.page}`
+  }
+
   if (!trimmed)
     return "Completed"
 
@@ -200,7 +207,7 @@ export function formatToolArgs(args: unknown) {
   if (!args || typeof args !== "object")
     return ""
 
-  const preferredKeys = ["path", "filePath", "file_path", "pattern", "glob", "command"]
+  const preferredKeys = ["path", "filePath", "file_path", "pattern", "glob", "command", "page"]
   return preferredKeys
     .map((key) => {
       const value = Reflect.get(args, key)
