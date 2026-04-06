@@ -1,6 +1,6 @@
 {
   "name": "slidev-addon-agent",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "Slidev addon and wrapper CLI for LangChain-powered slide authoring.",
   "scripts": {

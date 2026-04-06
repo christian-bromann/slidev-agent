@@ -16,7 +16,13 @@ export function env(
   return typeof value === "string" && value.trim() ? value.trim() : fallback
 }
 
-const globalEnv = "process" in globalThis ? globalThis.process.env : import.meta.env
+type ImportMetaEnv = ImportMeta & {
+  env?: Record<string, string | undefined>
+}
+
+const globalEnv = "process" in globalThis
+  ? globalThis.process.env
+  : (import.meta as ImportMetaEnv).env ?? {}
 const anthropicEnv = env(globalEnv, "ANTHROPIC_API_KEY")
 const googleEnv = env(globalEnv, "GOOGLE_API_KEY")
 const openaiEnv = env(globalEnv, "OPENAI_API_KEY")
