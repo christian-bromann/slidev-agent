@@ -31,3 +31,5 @@ pnpm add -D playwright-chromium
 ```
 
 You can swap `@langchain/openai` for `@langchain/anthropic` or `@langchain/google` depending on your model provider.
+
+For the full installation and setup instructions, see [`packages/slidev-agent/README.md`](./packages/slidev-agent/README.md).
