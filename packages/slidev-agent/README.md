@@ -24,6 +24,20 @@ pnpm add @langchain/openai   # or @langchain/anthropic / @langchain/google
 pnpm add -D playwright-chromium
 ```
 
+Replace your usual `slidev` CLI scripts with the wrapper CLI from this package so deck commands run through `slidev-agent` instead:
+
+```json
+{
+  "scripts": {
+    "dev": "slidev-agent dev --open",
+    "build": "slidev-agent build",
+    "export": "slidev-agent export"
+  }
+}
+```
+
+This wrapper still runs the Slidev CLI, but it also resolves the correct deck entry and starts `langgraph dev` automatically during `slidev-agent dev`. See [`example/package.json`](../../example/package.json) for a working setup.
+
 Add the addon to your Slidev project and render the components from root layer files:
 
 ```vue
