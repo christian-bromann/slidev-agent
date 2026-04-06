@@ -15,10 +15,13 @@
   "dependencies": {
     "@langchain/anthropic": "latest",
     "@langchain/langgraph": "latest",
-    "slidev-addon-agent": "workspace:*",
     "@slidev/cli": "^52.14.1",
     "@slidev/theme-default": "latest",
     "@slidev/theme-seriph": "latest",
+    "slidev-addon-agent": "workspace:*",
     "vue": "^3.5.29"
+  },
+  "devDependencies": {
+    "playwright-chromium": "^1.59.1"
   }
 }

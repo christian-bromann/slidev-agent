@@ -13,12 +13,10 @@ comark: true
 duration: 45min
 ---
 
-# Deep Agents by LangChain
-
-## The Backend Brain Behind Generative UI
+# My Agent Built This Presentation
 
 <div class="mt-8 text-xl opacity-80">
-  How agentic reasoning powers the next generation of AI-native interfaces
+  Deep Agents and the Agentic Frontend
 </div>
 
 <div class="mt-12 text-lg opacity-60">
@@ -28,6 +26,26 @@ duration: 45min
 <div class="abs-br m-6 flex gap-2">
   <div class="text-sm opacity-50">Press Space to continue →</div>
 </div>
+
+---
+src: ./pages/deep-agent-intro-part1.md
+---
+
+---
+src: ./pages/deep-agent-intro-part2.md
+---
+
+---
+src: ./pages/usestream-overview.md
+---
+
+---
+src: ./pages/usestream-tool-calls.md
+---
+
+---
+src: ./pages/usestream-subagents.md
+---
 
 ---
 layout: center
