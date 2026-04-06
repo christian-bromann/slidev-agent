@@ -1,6 +1,6 @@
 # Slidev Agent
 
-Build Slidev presentations with an agent in the loop.
+Build [Slidev](https://sli.dev/) presentations with an agent in the loop.
 
 `slidev-agent` combines a Slidev addon, a local wrapper CLI, and a LangChain-powered [Deep Agent](https://docs.langchain.com/oss/javascript/deepagents/overview) so you can draft, revise, review, and iterate on decks without leaving your presentation workflow.
 
