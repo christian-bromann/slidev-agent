@@ -38,6 +38,18 @@ Replace your usual `slidev` CLI scripts with the wrapper CLI from this package s
 
 This wrapper still runs the Slidev CLI, but it also resolves the correct deck entry and starts `langgraph dev` automatically during `slidev-agent dev`. See [`example/package.json`](../../example/package.json) for a working setup.
 
+Also register the addon in your Slidev project's `package.json`:
+
+```json
+{
+  "slidev": {
+    "addons": [
+      "slidev-addon-agent"
+    ]
+  }
+}
+```
+
 Add the addon to your Slidev project and render the components from root layer files:
 
 ```vue

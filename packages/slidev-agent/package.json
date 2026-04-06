@@ -17,8 +17,8 @@
   },
   "exports": {
     ".": "./package.json",
-    "./agent": "./agent/index.ts",
-    "./app": "./app/index.ts"
+    "./agent": "./dist/agent/index.js",
+    "./app": "./dist/app/index.js"
   },
   "files": [
     "README.md",
@@ -27,7 +27,8 @@
     "dist",
     "components",
     "lib",
-    "public"
+    "public",
+    "vite.config.ts"
   ],
   "dependencies": {
     "@langchain/langgraph-cli": "^1.1.17",

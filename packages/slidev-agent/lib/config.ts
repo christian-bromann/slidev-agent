@@ -63,7 +63,7 @@ export function clearSlidevAgentThreadId(assistantId: string, deckId: string) {
 export function resolveSlidevAgentRuntimeConfig(): SlidevAgentRuntimeConfig {
   const injectedConfig = readInjectedConfig()
   const apiUrl = env(import.meta.env, "VITE_LANGGRAPH_API_URL") || injectedConfig.apiUrl || "http://localhost:2024"
-  const assistantId = env(import.meta.env, "VITE_LANGGRAPH_ASSISTANT_ID") || injectedConfig.assistantId || ""
+  const assistantId = env(import.meta.env, "VITE_LANGGRAPH_ASSISTANT_ID") || injectedConfig.assistantId || "agent"
   const deckId = env(import.meta.env, "VITE_SLIDEV_AGENT_DECK_ID") || "default-deck"
   const inputPlaceholder = env(import.meta.env, "VITE_SLIDEV_AGENT_PLACEHOLDER") || "Ask the agent to create or revise slides..."
   const threadId = env(import.meta.env, "VITE_LANGGRAPH_THREAD_ID") || readStoredThreadId(assistantId, deckId)
