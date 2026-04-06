@@ -1,13 +1,15 @@
 import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises"
 import path from "node:path"
 
+import { env } from "./env.js"
+
 const GENERATED_ROOT = ".slidev-agent/generated"
 const MANIFEST_PATH = ".slidev-agent/manifest.json"
 
 type BridgeConfig = {
-  apiUrl: string
-  deckId: string
-  namespace: string
+  apiUrl?: string
+  deckId?: string
+  namespace?: string
   entry: string
   routePrefix: string
   cwd: string
@@ -29,17 +31,10 @@ type BridgeManifest = {
   files: string[]
 }
 
-function env(name: string, fallback = "") {
-  return process.env[name]?.trim() || fallback
-}
-
 function resolveBridgeConfig(cwd: string): BridgeConfig {
   return {
-    apiUrl: env("SLIDEV_AGENT_API_URL"),
-    deckId: env("SLIDEV_AGENT_DECK_ID"),
-    namespace: env("SLIDEV_AGENT_NAMESPACE"),
-    entry: env("SLIDEV_AGENT_ENTRY", "slides.md"),
-    routePrefix: env("SLIDEV_AGENT_ROUTE_PREFIX", "/slidev-agent"),
+    entry: env(process.env, "SLIDEV_AGENT_ENTRY", "slides.md"),
+    routePrefix: env(process.env, "SLIDEV_AGENT_ROUTE_PREFIX", "/slidev-agent"),
     cwd,
   }
 }
@@ -56,6 +51,9 @@ function normalizeRoutePrefix(routePrefix: string) {
 }
 
 function createDeckUrl(config: BridgeConfig) {
+  if (!config.apiUrl || !config.deckId)
+    return undefined
+
   const prefix = normalizeRoutePrefix(config.routePrefix)
   const url = new URL(`${prefix}/decks/${encodeURIComponent(config.deckId)}`, config.apiUrl)
 
@@ -119,7 +117,12 @@ export async function pullRemoteSlides(cwd = process.cwd()) {
     }
   }
 
-  const response = await fetch(createDeckUrl(config), {
+  const deckUrl = createDeckUrl(config)
+  if (!deckUrl) {
+    throw new Error("Remote sync is not configured. Set SLIDEV_AGENT_API_URL and SLIDEV_AGENT_DECK_ID.")
+  }
+
+  const response = await fetch(deckUrl, {
     headers: {
       accept: "application/json",
     },
@@ -172,7 +175,12 @@ export async function pushRemoteSlides(cwd = process.cwd()) {
     })
   }
 
-  const response = await fetch(createDeckUrl(config), {
+  const deckUrl = createDeckUrl(config)
+  if (!deckUrl) {
+    throw new Error("Remote sync is not configured. Set SLIDEV_AGENT_API_URL and SLIDEV_AGENT_DECK_ID.")
+  }
+
+  const response = await fetch(deckUrl, {
     method: "PUT",
     headers: {
       "content-type": "application/json",

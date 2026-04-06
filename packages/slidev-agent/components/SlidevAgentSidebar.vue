@@ -362,6 +362,7 @@ async function sendMessage() {
         },
         multitaskStrategy: "enqueue",
         optimisticValues: previous => buildOptimisticValues(previous, nextMessage),
+        streamSubgraphs: true,
       },
     )
   }

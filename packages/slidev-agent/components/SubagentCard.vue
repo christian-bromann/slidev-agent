@@ -32,22 +32,6 @@ defineProps<{
           {{ subagent.latestToolStateLabel }}
         </span>
       </div>
-      <span v-if="subagent.latestToolArgs" class="slidev-agent-subagent-card__tool-args">
-        {{ subagent.latestToolArgs }}
-      </span>
-      <span v-if="subagent.latestToolSummary" class="slidev-agent-subagent-card__tool-summary">
-        {{ subagent.latestToolSummary }}
-      </span>
-    </div>
-
-    <div v-if="subagent.files.length > 0" class="slidev-agent-subagent-card__files">
-      <span
-        v-for="file in subagent.files"
-        :key="file"
-        class="slidev-agent-subagent-card__file"
-      >
-        {{ file }}
-      </span>
     </div>
   </div>
 </template>

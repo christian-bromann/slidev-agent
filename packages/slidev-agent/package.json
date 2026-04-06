@@ -31,7 +31,7 @@
   ],
   "dependencies": {
     "@langchain/langgraph-cli": "^1.1.17",
-    "@langchain/vue": "^0.4.2",
+    "@langchain/vue": "^0.4.5",
     "deepagents": "^1.8.8",
     "dompurify": "^3.3.3",
     "hono": "^4.12.10",
@@ -45,7 +45,6 @@
     "@langchain/langgraph": "^1.2.6",
     "@langchain/openai": "^1.4.1",
     "@slidev/cli": "^52.14.1",
-    "agent-browser": "^0.24.0",
     "vue": "^3.5.0"
   },
   "peerDependenciesMeta": {
@@ -57,14 +56,10 @@
     },
     "@langchain/openai": {
       "optional": true
-    },
-    "agent-browser": {
-      "optional": true
     }
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
-    "agent-browser": "^0.24.0",
     "typescript": "^5.9.3"
   }
 }

@@ -10,3 +10,4 @@ components.d.ts
 
 .claude
 agent-os
+example/.slidev-agent-artifacts

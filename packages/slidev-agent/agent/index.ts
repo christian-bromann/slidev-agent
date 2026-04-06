@@ -3,14 +3,21 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 
 import { createDeepAgent, LocalShellBackend } from "deepagents"
+import { dynamicSystemPromptMiddleware } from "langchain"
+import { z } from "zod"
+
+import { createFilesystemPathGuardMiddleware } from "./middleware.js"
+import { model, env } from "../lib/env.js"
+import { slidevGoToSlide } from "../lib/headless-tools.js"
+
+import { resolveDeckExecutionContext } from "./deck-context.js"
+import { createSlidevExportScreenshotTool } from "./tools/export-tool.js"
+import { createSlidevReviewScreenshotTool } from "./tools/review-tool.js"
 import {
   SLIDEV_AGENT_DEFAULT_SYSTEM_PROMPT,
   SLIDEV_SLIDE_GENERATOR_SUBAGENT_DESCRIPTION,
   SLIDEV_SLIDE_GENERATOR_SYSTEM_PROMPT,
 } from "./constants.js"
-import { slidevGoToSlide } from "../lib/headless-tools.js"
-import { dynamicSystemPromptMiddleware } from "langchain"
-import { z } from "zod"
 
 type SlidevDeepAgentOptions = {
   model?: string
@@ -18,18 +25,6 @@ type SlidevDeepAgentOptions = {
   rootDir?: string
   virtualMode?: boolean
   skills?: string[]
-}
-
-const providerPackageMap: Record<string, string> = {
-  anthropic: "@langchain/anthropic",
-  google: "@langchain/google",
-  openai: "@langchain/openai",
-}
-
-const providerApiKeyMap: Record<string, string[]> = {
-  anthropic: ["ANTHROPIC_API_KEY"],
-  google: ["GOOGLE_API_KEY"],
-  openai: ["OPENAI_API_KEY"]
 }
 
 export const slidevAgentContextSchema = z.object({
@@ -41,45 +36,12 @@ export const slidevAgentContextSchema = z.object({
   }).optional(),
 })
 
-function env(name: string, fallback = ""): string {
-  const value = process.env[name]
-  return typeof value === "string" && value.trim() ? value.trim() : fallback
-}
-
 function resolveSystemPrompt(): string {
-  const customPrompt = env("SLIDEV_AGENT_SYSTEM_PROMPT")
+  const customPrompt = env(process.env, "SLIDEV_AGENT_SYSTEM_PROMPT")
   if (customPrompt)
     return customPrompt
 
   return SLIDEV_AGENT_DEFAULT_SYSTEM_PROMPT
-}
-
-export function getSlidevAgentProviderDiagnostics(model = env("SLIDEV_AGENT_MODEL")) {
-  if (!model || !model.includes(":")) {
-    return {
-      model,
-      provider: "",
-      packageName: "",
-      apiKeyEnvVars: [] as string[],
-      hasExplicitModel: false,
-      hasProviderPackageHint: false,
-      hasApiKeyHint: false,
-    }
-  }
-
-  const provider = model.split(":")[0].trim()
-  const packageName = providerPackageMap[provider] || ""
-  const apiKeyEnvVars = providerApiKeyMap[provider] || []
-
-  return {
-    model,
-    provider,
-    packageName,
-    apiKeyEnvVars,
-    hasExplicitModel: true,
-    hasProviderPackageHint: Boolean(packageName),
-    hasApiKeyHint: apiKeyEnvVars.some(name => Boolean(process.env[name]?.trim())),
-  }
 }
 
 function normalizeSkillPath(skillPath: string): string {
@@ -91,7 +53,7 @@ function normalizeSkillPath(skillPath: string): string {
 }
 
 function resolveSlidevSkillPaths(rootDir: string): string[] {
-  const explicitSkillsPath = env("SLIDEV_AGENT_SKILLS_PATH")
+  const explicitSkillsPath = env(process.env, "SLIDEV_AGENT_SKILLS_PATH")
   if (explicitSkillsPath) {
     return explicitSkillsPath
       .split(",")
@@ -109,32 +71,108 @@ function resolveSlidevSkillPaths(rootDir: string): string[] {
   return [normalizeSkillPath(relativeSkillsDir)]
 }
 
+function buildSlideGeneratorRuntimePrompt(rootDir: string) {
+  const deckContext = resolveDeckExecutionContext(rootDir)
+  const deckHostDir = deckContext.deckHostDir
+  const entryPath = deckContext.entryPath
+  const artifactDir = path.join(deckHostDir, ".slidev-agent-artifacts", "verify-<slideIndex>")
+  const generatedImagePath = path.join(artifactDir, "<generated-file>.png")
+  const reviewImageRelativePath = deckContext.deckDir === "."
+    ? `.slidev-agent-artifacts/verify-<slideIndex>/<generated-file>.png`
+    : `${deckContext.deckDir}/.slidev-agent-artifacts/verify-<slideIndex>/<generated-file>.png`
+  const directExportCommand = [
+    `cd "${deckHostDir}"`,
+    "mkdir -p .slidev-agent-artifacts/verify-<slideIndex> &&",
+    "pnpm exec slidev-agent export",
+    "--format png",
+    "--range <slideIndex>",
+    "--per-slide",
+    "--output ./.slidev-agent-artifacts/verify-<slideIndex>",
+    "--timeout 60000",
+    "--wait 500",
+    "--scale 1",
+  ].join(" ")
+  const rootScriptExportCommand = deckContext.rootExportScript
+    ? [
+        `cd "${rootDir}"`,
+        "pnpm export --",
+        "--format png",
+        "--range <slideIndex>",
+        "--per-slide",
+        "--output ./.slidev-agent-artifacts/verify-<slideIndex>",
+        "--timeout 60000",
+        "--wait 500",
+        "--scale 1",
+      ].join(" ")
+    : null
+
+  const lines = [
+    "## Runtime deck execution context",
+    "Filesystem tools are rooted at the agent project root. Use project-relative paths like `/example/slides.md` there, never host paths like `/Users/.../example/slides.md`.",
+    `Inside \`execute\`, paths like \`/\` refer to the real host filesystem root. Do not treat \`/\` as a virtual project root.`,
+    `Agent root for this run: \`${rootDir}\`.`,
+    `Configured Slidev entry for this run: \`${entryPath}\`.`,
+    `Runnable deck package directory for exports: \`${deckHostDir}\`. Always run export there unless you are intentionally invoking a wrapper script from \`${rootDir}\`.`,
+    "For screenshot export, use the dedicated `slidev_export_screenshot` tool first instead of hand-writing shell commands.",
+    "If there is any uncertainty about the current assembled deck length after imports or reordering, recount from the fully assembled deck before choosing a validation index. Do not guess or clamp the index.",
+    "When revising an existing slide file that is already imported into the deck, its validation index usually stays the same. Do not add 1 just because you edited the file.",
+    `If you need to debug manually, this is the known-good fallback command: \`${directExportCommand}\`.`,
+    rootScriptExportCommand
+      ? `Optional root-package wrapper command: \`${rootScriptExportCommand}\`. Use it only if you specifically want the root package script.`
+      : "",
+    "The `execute` shell starts in the deck package directory already. Keep export commands cwd-relative and do not `cd /` before exporting.",
+    `Write export artifacts under \`${artifactDir}\` using a relative path like \`./.slidev-agent-artifacts/...\` or that full host path.`,
+    "Never use `/.slidev-agent-artifacts`, `pnpm --prefix /`, or any other host-root path unless the project itself actually lives at filesystem root.",
+    "Logical project paths such as `/pages/foo.md` or `/slides.md` are for filesystem tools, not shell paths. For `execute`, strip the leading slash and use cwd-relative paths instead.",
+    `When calling \`slidev_review_screenshot\`, prefer the real host PNG path \`${generatedImagePath}\`. A root-relative alternative within the agent root is \`${reviewImageRelativePath}\`.`,
+    "If screenshot export says the deck has fewer slides than requested, or says it produced no PNGs, your slide index is wrong or the slide is not imported into the final deck yet. Fix the deck/import/index mismatch before retrying.",
+    "Do not scan `/Users`, `/node_modules`, or the whole filesystem to locate Slidev once the deck context above is available.",
+  ].filter(Boolean)
+
+  return lines.join("\n")
+}
+
 export function createSlidevDeepAgent(options: SlidevDeepAgentOptions = {}) {
-  const model = options.model || env("SLIDEV_AGENT_MODEL")
   const systemPrompt = options.systemPrompt || resolveSystemPrompt()
   const rootDir = options.rootDir
     ? path.resolve(options.rootDir)
-    : path.resolve(env("SLIDEV_AGENT_ROOT_DIR") || process.cwd())
+    : path.resolve(env(process.env, "SLIDEV_AGENT_ROOT_DIR") || process.cwd())
 
   const skills = options.skills || resolveSlidevSkillPaths(rootDir)
+  const filesystemPathGuardMiddleware = createFilesystemPathGuardMiddleware(rootDir)
+  const slidevExportScreenshot = createSlidevExportScreenshotTool(path.resolve(rootDir))
+  const slidevReviewScreenshot = createSlidevReviewScreenshotTool(path.resolve(rootDir))
+  const slideGeneratorSystemPrompt = [
+    SLIDEV_SLIDE_GENERATOR_SYSTEM_PROMPT,
+    buildSlideGeneratorRuntimePrompt(rootDir),
+  ].join("\n\n")
 
   fs.mkdirSync(rootDir, { recursive: true })
+  if (!model) {
+    throw new Error("No model or API key is configured. Set `SLIDEV_AGENT_MODEL` or `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, or `OPENAI_API_KEY` to a valid API key.")
+  }
 
   return createDeepAgent({
-    ...(model ? { model } : {}),
+    model,
     systemPrompt,
-    tools: [slidevGoToSlide],
+    tools: [
+      slidevGoToSlide,
+      slidevExportScreenshot,
+      slidevReviewScreenshot
+    ],
     ...(skills.length > 0 ? { skills } : {}),
     subagents: [
       {
         name: "slide_generator",
         description: SLIDEV_SLIDE_GENERATOR_SUBAGENT_DESCRIPTION,
-        systemPrompt: SLIDEV_SLIDE_GENERATOR_SYSTEM_PROMPT,
+        systemPrompt: slideGeneratorSystemPrompt,
+        middleware: [filesystemPathGuardMiddleware],
         ...(skills.length > 0 ? { skills } : {}),
       },
     ],
     contextSchema: slidevAgentContextSchema,
     middleware: [
+      filesystemPathGuardMiddleware,
       dynamicSystemPromptMiddleware((_state, runtime) => {
         const context = (runtime.context ?? {}) as z.infer<typeof slidevAgentContextSchema>
         const currentSlide = context.currentSlide

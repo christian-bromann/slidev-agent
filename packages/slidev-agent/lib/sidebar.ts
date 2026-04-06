@@ -152,6 +152,7 @@ export function truncateText(value: string, maxLength = 96) {
 const TOOL_HEADLINES: Record<string, string> = {
   slide_generator: "Generate or revise a slide",
   slidev_go_to_slide: "Open generated slide",
+  slidev_review_screenshot: "Review slide screenshot",
   read_file: "Read file",
   write_file: "Write file",
   edit_file: "Edit file",

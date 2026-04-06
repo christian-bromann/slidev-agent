@@ -7,14 +7,11 @@ export interface SlidevAgentRuntimeConfig {
   enabled: boolean
 }
 
+import { env } from "./env"
+
 interface SlidevAgentInjectedConfig {
   apiUrl?: string
   assistantId?: string
-}
-
-function readEnv(name: string) {
-  const value = import.meta.env[name]
-  return typeof value === "string" ? value.trim() : ""
 }
 
 function readInjectedConfig(): SlidevAgentInjectedConfig {
@@ -65,11 +62,11 @@ export function clearSlidevAgentThreadId(assistantId: string, deckId: string) {
 
 export function resolveSlidevAgentRuntimeConfig(): SlidevAgentRuntimeConfig {
   const injectedConfig = readInjectedConfig()
-  const apiUrl = readEnv("VITE_LANGGRAPH_API_URL") || injectedConfig.apiUrl || "http://localhost:2024"
-  const assistantId = readEnv("VITE_LANGGRAPH_ASSISTANT_ID") || injectedConfig.assistantId || ""
-  const deckId = readEnv("VITE_SLIDEV_AGENT_DECK_ID") || "default-deck"
-  const inputPlaceholder = readEnv("VITE_SLIDEV_AGENT_PLACEHOLDER") || "Ask the agent to create or revise slides..."
-  const threadId = readEnv("VITE_LANGGRAPH_THREAD_ID") || readStoredThreadId(assistantId, deckId)
+  const apiUrl = env(import.meta.env, "VITE_LANGGRAPH_API_URL") || injectedConfig.apiUrl || "http://localhost:2024"
+  const assistantId = env(import.meta.env, "VITE_LANGGRAPH_ASSISTANT_ID") || injectedConfig.assistantId || ""
+  const deckId = env(import.meta.env, "VITE_SLIDEV_AGENT_DECK_ID") || "default-deck"
+  const inputPlaceholder = env(import.meta.env, "VITE_SLIDEV_AGENT_PLACEHOLDER") || "Ask the agent to create or revise slides..."
+  const threadId = env(import.meta.env, "VITE_LANGGRAPH_THREAD_ID") || readStoredThreadId(assistantId, deckId)
 
   return {
     apiUrl,

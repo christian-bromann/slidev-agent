@@ -2,14 +2,10 @@ import path from "node:path"
 import { readFile, stat } from "node:fs/promises"
 
 import { Hono } from "hono"
-
-function env(name: string, fallback = ""): string {
-  const value = process.env[name]
-  return typeof value === "string" && value.trim() ? value.trim() : fallback
-}
+import { env } from "../lib/env.js"
 
 function resolveRootDir() {
-  return path.resolve(env("SLIDEV_AGENT_ROOT_DIR") || process.cwd())
+  return path.resolve(env(process.env, "SLIDEV_AGENT_ROOT_DIR") || process.cwd())
 }
 
 function normalizeBasePath(basePath: string) {
@@ -63,7 +59,7 @@ async function exists(filePath: string) {
 }
 
 async function proxyToDevServer(requestUrl: URL, assetPath: string) {
-  const devServerUrl = new URL(env("SLIDEV_AGENT_DEV_URL", "http://localhost:3030"))
+  const devServerUrl = new URL(env(process.env, "SLIDEV_AGENT_DEV_URL", "http://localhost:3030"))
   const targetUrl = new URL(assetPath || "/", devServerUrl)
   targetUrl.search = requestUrl.search
 
@@ -78,7 +74,7 @@ async function proxyToDevServer(requestUrl: URL, assetPath: string) {
 
 const app = new Hono()
 
-const basePath = normalizeBasePath(env("SLIDEV_AGENT_APP_BASE_PATH", "/slidev-agent"))
+const basePath = normalizeBasePath(env(process.env, "SLIDEV_AGENT_APP_BASE_PATH", "/slidev-agent"))
 
 app.get("/", c => c.redirect(`${basePath}/`, 302))
 app.get(basePath, c => c.redirect(`${basePath}/`, 302))
