@@ -46,12 +46,22 @@ flowchart LR
   </div>
   </div>
 
-  <!-- Value prop -->
-  <div v-click class="col col-value">
-    <div class="col-label">Why It Matters</div>
-    <div class="col-body">
-      <div class="value-prop">
-        Handles <strong>complex multi-step tasks</strong>, manages <strong>large context</strong>, runs <strong>interactively</strong> or <strong>non-interactively</strong>
+  <div class="col-values">
+    <!-- Value prop -->
+    <div v-click class="col col-value">
+      <div class="col-label">Subagent Modes</div>
+      <div class="col-body">
+        <div class="value-prop">
+          Launch subagents <strong>synchronously</strong>, <strong>asynchronously</strong>, or through a <strong>REPL</strong>, depending on whether work should block, run in the background, or stay exploratory
+        </div>
+      </div>
+    </div>
+    <div v-click class="col col-value">
+      <div class="col-label">Why It Matters</div>
+      <div class="col-body">
+        <div class="value-prop">
+          Handles <strong>complex multi-step tasks</strong>, manages <strong>large context</strong>, runs <strong>interactively</strong> or <strong>non-interactively</strong>
+        </div>
       </div>
     </div>
   </div>
@@ -85,8 +95,14 @@ flowchart LR
   flex: 1 1 auto;
   min-width: 0;
 }
-.deep-agent-intro-p2 .col-value {
+.deep-agent-intro-p2 .col-values {
   flex: 0 0 24%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.deep-agent-intro-p2 .col-value {
+  flex: 0 0 auto;
 }
 
 .deep-agent-intro-p2 .col-label {

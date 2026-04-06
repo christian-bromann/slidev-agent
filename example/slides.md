@@ -40,6 +40,10 @@ src: ./pages/usestream-overview.md
 ---
 
 ---
+src: ./pages/sdk-additional-features.md
+---
+
+---
 src: ./pages/usestream-tool-calls.md
 ---
 

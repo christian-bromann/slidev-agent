@@ -14,7 +14,7 @@ class: text-sm
 
 **Chat setup**
 
-```tsx {5|10|14-19|all}{lines:true,maxHeight:'240px'}
+```tsx {all}{lines:true,maxHeight:'240px'}
 const stream = useStream({
   apiUrl: "http://localhost:2024",
   assistantId: "deep_agent",

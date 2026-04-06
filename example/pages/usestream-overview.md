@@ -18,12 +18,12 @@ transition: slide-left
 
 ::left::
 
-<div class="pr-4">
+<div class="pr-4 mt-8">
 
 **Available for all major frameworks**
 
 ```typescript
-import { useStream } from "@langchain/react";    // React
+import { useStream } from "@langchain/react";     // React
 import { useStream } from "@langchain/vue";       // Vue
 import { useStream } from "@langchain/svelte";    // Svelte
 import { useStream } from "@langchain/angular";   // Angular
@@ -44,7 +44,7 @@ import { useStream } from "@langchain/angular";   // Angular
 
 ::right::
 
-<div v-click class="pl-4 border-l border-gray-600">
+<div v-click class="pl-4 mt-8 pb-8 border-l border-gray-600">
 
 **Returns from `useStream`**
 

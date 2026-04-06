@@ -3,55 +3,55 @@ layout: two-cols-header
 transition: slide-left
 ---
 
-# Rendering Tool Calls in React
+# Typing `useStream` for Safety
 
-<span class="opacity-60 text-sm">Access tool call state via <code>stream.toolCalls</code> — filter per-message, render with loading / error / success states</span>
+<span class="opacity-60 text-sm">_Define your agent's state shape once — TypeScript does the rest_</span>
 
 ::left::
 
-**`Chat.tsx` — filter tool calls per message**
+**1. Define your agent state interface**
 
-```tsx {maxHeight:'270px'}
-import { useStream } from "@langchain/react";
+```ts
+import type { agent } from "./agent";
 
-export function Chat() {
-  const stream = useStream({
-    apiUrl: "http://localhost:2024",
-    assistantId: "my_agent",
-  });
-  return stream.messages.map((msg) => (
-    <Message
-      key={msg.id} message={msg}
-      toolCalls={stream.toolCalls.filter(
-        (tc) => msg.tool_calls?.find(
-          (t) => t.id === tc.call.id))}
-    />
-  ));
-}
+// Pass it as a type parameter
+const stream = useStream<typeof agent>({
+  apiUrl: "http://localhost:2024",
+  assistantId: "agent",
+});
+
+// ✅ stream.values.messages → BaseMessage[]
+// ❌ Without <typeof agent>  → unknown
 ```
+
+
+<div class="mt-3 rounded border border-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 text-xs leading-snug">
+
+🔒 **Compile-time safety** — a schema change in your graph instantly flags every UI component that reads those fields
+
+</div>
 
 ::right::
 
-**`ToolCard.tsx` — state-driven rendering**
+**2. Typed stream values + narrowing tool calls**
 
-```tsx {maxHeight:'215px'}
-function ToolCard({ toolCall }) {
-  if (toolCall.state === "pending")
-    return <Spinner>{toolCall.call.name}</Spinner>;
-  if (toolCall.state === "error")
-    return <Error>{toolCall.call.name}</Error>;
-  return (
-    <div className="rounded border p-3">
-      <strong>{toolCall.call.name}</strong>
-      <pre>{JSON.stringify(
-        toolCall.result?.content, null, 2)}</pre>
-    </div>
-  );
+```tsx
+import type { weatherTool, calculatorTool } from "./agent";
+import type { ToolCallWithResult } from "@langchain/react";
+
+export type AgentToolCalls =
+  | ToolCallFromTool<typeof weatherTool>
+  | ToolCallFromTool<typeof calculatorTool>;
+
+export function ToolCallCard({ toolCall }: { toolCall: ToolCallWithResult<AgentToolCalls> }) {
+  const { call, result, state } = toolCall;
+
+  if (call.name === "get_weather")
+    return <WeatherToolCard call={call} result={result} state={state} />;
+
+  if (call.name === "calculate")
+    return <CalculatorToolCard call={call} result={result} state={state} />;
+
+  return <GenericToolCard call={call} result={result} state={state} />;
 }
 ```
-
-<div class="mt-2 rounded border border-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 text-xs leading-snug">
-
-💡 **`state`** drives the UI branch: `"pending"` → spinner · `"error"` → alert · `"completed"` → result
-
-</div>

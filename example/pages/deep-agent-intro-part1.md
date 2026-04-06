@@ -6,13 +6,18 @@ class: deep-agent-intro-p1
 
 # What is Deep Agents?
 
-<div class="mt-1 mb-3 text-sm opacity-70">
-  A <span class="text-blue-400 font-semibold">JavaScript/TypeScript SDK</span> built on top of
+<div class="mt-1 mb-2 text-sm opacity-70">
+  Available as a <span class="text-blue-400 font-semibold">JavaScript/TypeScript SDK</span> and a <span class="text-yellow-400 font-semibold">Python package</span>, built on top of
   <span class="text-green-400 font-semibold">LangChain</span> +
   <span class="text-purple-400 font-semibold">LangGraph</span>
 </div>
 
-<div class="tagline mb-5">
+<div class="install-row my-8">
+  <span class="install-pill install-js">npm install deepagents</span>
+  <span class="install-pill install-py">pip install deepagents</span>
+</div>
+
+<div class="tagline mb-4">
   An <span class="text-yellow-400 font-bold">"agent harness"</span> — baked-in capabilities so you wire nothing up from scratch.
 </div>
 
@@ -60,6 +65,34 @@ class: deep-agent-intro-p1
   margin-bottom: 0 !important;
 }
 
+.deep-agent-intro-p1 .install-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.deep-agent-intro-p1 .install-pill {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+}
+
+.deep-agent-intro-p1 .install-js {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: #93c5fd;
+}
+
+.deep-agent-intro-p1 .install-py {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  color: #fde047;
+}
+
 .deep-agent-intro-p1 .tagline {
   font-size: 1rem;
   line-height: 1.5;
@@ -70,14 +103,14 @@ class: deep-agent-intro-p1
 .deep-agent-intro-p1 .capabilities-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 20px;
+  gap: 20px;
 }
 
 .deep-agent-intro-p1 .cap-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  gap: 16px;
+  padding: 20px 20px;
   border-radius: 10px;
   background: rgba(100, 116, 139, 0.12);
   border: 1px solid rgba(100, 116, 139, 0.25);
